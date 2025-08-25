@@ -3,1779 +3,537 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Financial Tracker</title>
-    <!-- Favicon -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Financial Tracker</title>
     <style>
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f0f2f5; /* Light gray background */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f0f2f5;
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* Align to top */
+            align-items: center;
             min-height: 100vh;
-            padding: 1rem; /* Default padding for mobile */
-            box-sizing: border-box;
-        }
-        /* Adjust body padding for larger screens */
-        @media (min-width: 640px) { /* sm breakpoint */
-            body {
-                padding: 2rem;
-            }
         }
 
         .container {
-            background-color: #ffffff;
-            border-radius: 1.5rem; /* More rounded corners */
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            width: 100%;
-            box-sizing: border-box;
-        }
-        .section-title {
-            font-size: 1.75rem; /* Larger title */
-            font-weight: 700;
-            color: #1a202c;
-            margin-bottom: 1.5rem;
-            border-bottom: 2px solid #edf2f7;
-            padding-bottom: 0.75rem;
-        }
-        .summary-card {
-            background-color: #e2e8f0; /* Light blue-gray for summary cards */
-            border-radius: 1rem;
-            padding: 1.5rem;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 120px; /* Ensure consistent height */
-            transition: transform 0.2s ease-in-out; /* Smooth transition for hover */
-        }
-        .summary-card:hover {
-            transform: scale(1.03); /* Slightly zoom in on hover */
-        }
-        .summary-label {
-            font-size: 0.95rem;
-            color: #4a5568;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-        .summary-amount {
-            font-size: 2.25rem; /* Larger amount */
-            font-weight: 700;
-            color: #2d3748;
-            white-space: nowrap; /* Prevent text from wrapping */
-            overflow: hidden; /* Hide overflowing text */
-            text-overflow: ellipsis; /* Add ellipsis for hidden overflow */
-        }
-        .safe-to-spend .summary-amount {
-            color: #22c55e; /* Green for safe to spend */
-        }
-        .credit-card-debt .summary-amount {
-            color: #ef4444; /* Red for credit card debt */
-        }
-        .total-debt .summary-amount {
-            color: #f59e0b; /* Amber for total debt */
-        }
-        .add-button {
-            background-color: #4c51bf; /* Indigo */
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            transition: background-color 0.3s ease;
-        }
-        .add-button:hover {
-            background-color: #4338ca; /* Darker indigo */
-        }
-        /* Responsive item-card styling */
-        .item-card {
-            background-color: #f7fafc; /* Lighter background for items */
-            border-radius: 0.75rem;
-            padding: 1rem 1.5rem;
-            display: flex;
-            flex-direction: column; /* Default to column for mobile */
-            justify-content: space-between;
-            align-items: flex-start; /* Align items to start in column layout */
-            margin-bottom: 0.75rem;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-        }
-        @media (min-width: 640px) { /* sm breakpoint */
-            .item-card {
-                flex-direction: row; /* Row for larger screens */
-                align-items: center; /* Center items in row layout */
-            }
-        }
-
-        .item-name {
-            font-weight: 600;
-            color: #2d3748;
-        }
-        .item-amount {
-            font-weight: 500;
-            color: #4a5568;
-        }
-        .delete-button {
-            background-color: #ef4444; /* Red */
-            color: white;
-            padding: 0.4rem 0.8rem;
-            border-radius: 0.5rem;
-            font-size: 0.8rem;
-            transition: background-color 0.3s ease;
-            margin-left: 0.75rem; /* Added spacing */
-        }
-        .delete-button:hover {
-            background-color: #dc2626; /* Darker red */
-        }
-        .modal {
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            z-index: 1000; /* Sit on top */
-            left: 0;
-            top: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background-color: #fefefe;
-            margin: auto;
+            background-color: white;
             padding: 2rem;
-            border-radius: 1rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             width: 90%;
-            max-width: 500px;
-            text-align: center;
-        }
-        .modal-close-button {
-            background-color: #6b7280; /* Gray */
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            transition: background-color 0.3s ease;
-            margin-top: 1.5rem;
-        }
-        .modal-close-button:hover {
-            background-color: #4b5563; /* Darker gray */
-        }
-        .form-group {
-            margin-bottom: 1rem;
-            text-align: left;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: #2d3748;
-        }
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #cbd5e0;
-            border-radius: 0.5rem;
-            box-sizing: border-box;
-            font-size: 1rem;
-        }
-        .form-group input:focus, .form-group select:focus {
-            outline: none;
-            border-color: #4c51bf;
-            box-shadow: 0 0 0 3px rgba(76, 81, 191, 0.2);
-        }
-        .submit-button {
-            background-color: #4c51bf;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            transition: background-color 0.3s ease;
-            width: 100%;
-            margin-top: 1rem;
-        }
-        .submit-button:hover {
-            background-color: #4338ca;
+            max-width: 600px;
         }
 
-        /* Tab Styles */
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
         .tabs {
             display: flex;
-            overflow-x: auto; /* Enable horizontal scrolling */
-            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-            scrollbar-width: none; /* Hide scrollbar for Firefox */
-            -ms-overflow-style: none;  /* Hide scrollbar for IE and Edge */
-            margin-bottom: 1.5rem;
-            border-bottom: 2px solid #e2e8f0;
-            white-space: nowrap; /* Prevent items from wrapping */
+            justify-content: space-around;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 1rem;
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
         }
-        /* Hide scrollbar for Webkit browsers (Chrome, Safari) */
-        .tabs::-webkit-scrollbar {
-            display: none;
-        }
+
         .tab-button {
-            flex-shrink: 0; /* Prevent buttons from shrinking */
-            padding: 0.75rem 1.5rem;
-            font-weight: 600;
-            color: #4a5568;
+            background: none;
+            border: none;
+            padding: 1rem;
             cursor: pointer;
-            border-top-left-radius: 0.5rem;
-            border-top-right-radius: 0.5rem;
-            transition: all 0.2s ease-in-out;
-            margin-right: 0.5rem;
-            background-color: #f7fafc;
+            font-size: 1rem;
+            color: #555;
+            flex-grow: 1;
+            text-align: center;
+            transition: color 0.3s ease, border-bottom 0.3s ease;
         }
+
         .tab-button:hover {
-            background-color: #edf2f7;
+            color: #007bff;
         }
+
         .tab-button.active {
-            color: #4c51bf;
-            border-bottom: 2px solid #4c51bf;
-            background-color: #ffffff;
+            color: #007bff;
+            border-bottom: 3px solid #007bff;
         }
+
         .tab-content {
             display: none;
         }
+
         .tab-content.active {
             display: block;
         }
 
-        /* Main Account Button Styles */
-        .main-account-button {
-            background-color: #2b6cb0; /* Blue */
-            color: white;
-            padding: 0.4rem 0.8rem;
-            border-radius: 0.5rem;
-            font-size: 0.8rem;
-            transition: background-color 0.3s ease;
-            margin-left: 0.5rem;
-        }
-        .main-account-button:hover {
-            background-color: #2a5a90; /* Darker blue */
-        }
-        .main-account-button.active {
-            background-color: #38a169; /* Green */
-        }
-        .main-account-button.active:hover {
-            background-color: #2f855a; /* Darker green */
+        .form-group {
+            margin-bottom: 1rem;
         }
 
-        .transaction-item {
-            background-color: #f7fafc;
-            border-radius: 0.75rem;
-            padding: 1rem 1.5rem;
-            margin-bottom: 0.75rem;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .transaction-item .description {
-            font-weight: 600;
-            color: #2d3748;
-            flex-grow: 1;
-        }
-        .transaction-item .amount {
-            font-weight: 500;
-            color: #4a5568;
-            margin-left: 1rem;
-        }
-        .transaction-item.income .amount {
-            color: #22c55e; /* Green for income */
-        }
-        .transaction-item.expense .amount {
-            color: #ef4444; /* Red for expense */
-        }
-        .transaction-item.transfer .amount, .transaction-item.transfer .icon {
-            color: #3b82f6; /* Blue for transfers */
-        }
-        /* Responsive credit-card-actions styling */
-        .credit-card-actions {
-            display: flex;
-            flex-direction: column; /* Stack buttons on mobile */
-            gap: 0.5rem;
-            margin-left: 0; /* Remove left margin for mobile */
-            width: 100%; /* Take full width on mobile */
-        }
-        @media (min-width: 640px) { /* sm breakpoint */
-            .credit-card-actions {
-                flex-direction: row; /* Row for larger screens */
-                margin-left: 1rem; /* Original margin for larger screens */
-                width: auto; /* Auto width for larger screens */
-            }
-        }
-        .credit-card-actions button {
-            width: 100%; /* Ensure buttons take full width when stacked */
-        }
-        @media (min-width: 640px) { /* sm breakpoint */
-            .credit-card-actions button {
-                width: auto; /* Auto width for larger screens */
-            }
-        }
-
-        /* Credit Utilization Bar Styles */
-        .credit-utilization-bar {
-            width: 100%;
-            height: 0.75rem;
-            background-color: #e2e8f0;
-            border-radius: 9999px; /* Full rounded corners */
-            overflow: hidden;
-            margin-top: 0.5rem;
-        }
-        .credit-utilization-fill {
-            height: 100%;
-            border-radius: 9999px;
-            transition: width 0.3s ease-in-out, background-color 0.3s ease-in-out;
-        }
-        .credit-utilization-text {
-            font-size: 0.875rem; /* text-sm */
-            font-weight: 500;
-            color: #4a5568;
-            margin-top: 0.25rem;
-            text-align: center;
-        }
-        .credit-card-display {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start; /* Align items to the start */
-            flex-grow: 1; /* Allow it to take available space */
-        }
-        .credit-card-display .item-name {
-            margin-bottom: 0.25rem; /* Small space between name and balance */
-        }
-        .credit-card-display .item-amount {
-            margin-bottom: 0.5rem; /* Space before the bar */
-        }
-
-        /* Loan Paid Off Bar Styles */
-        .loan-paid-off-bar {
-            width: 100%;
-            height: 0.75rem;
-            background-color: #e2e8f0;
-            border-radius: 9999px;
-            overflow: hidden;
-            margin-top: 0.5rem;
-        }
-        .loan-paid-off-fill {
-            height: 100%;
-            background-color: #22c55e; /* Always green */
-            border-radius: 9999px;
-            transition: width 0.3s ease-in-out;
-        }
-        .loan-paid-off-text {
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #4a5568;
-            margin-top: 0.25rem;
-            text-align: center;
-        }
-        .loan-display {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            flex-grow: 1;
-        }
-        .loan-display .item-name {
-            margin-bottom: 0.25rem;
-        }
-        .loan-display .item-amount {
-            margin-bottom: 0.5rem;
-        }
-
-        /* Transaction Dropdown Styles */
-        .transaction-dropdown {
-            margin-bottom: 1.5rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 0.75rem;
-            overflow: hidden;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-        }
-        .transaction-dropdown-header {
-            background-color: #f7fafc;
-            padding: 1rem 1.5rem;
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #2d3748;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        .transaction-dropdown-header:hover {
-            background-color: #edf2f7;
-        }
-        .transaction-dropdown-header .arrow-icon {
-            transition: transform 0.3s ease;
-        }
-        .transaction-dropdown-header.active .arrow-icon {
-            transform: rotate(90deg); /* Rotate arrow when active */
-        }
-        .transaction-dropdown-content {
-            padding: 1.5rem;
-            background-color: #ffffff;
-            display: none; /* Hidden by default */
-        }
-        .transaction-dropdown-content.active {
-            display: block; /* Shown when active */
-        }
-
-        /* Auth Page specific styles */
-        .auth-container {
-            background-color: #ffffff;
-            border-radius: 1.5rem;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            max-width: 400px;
-            width: 100%;
-            padding: 2.5rem;
-            box-sizing: border-box;
-            text-align: center;
-        }
-        .auth-title {
-            font-size: 2.25rem;
-            font-weight: 700;
-            color: #1a202c;
-            margin-bottom: 2rem;
-        }
-        .auth-form-group {
-            margin-bottom: 1.5rem;
-            text-align: left;
-        }
-        .auth-form-group label {
+        label {
             display: block;
             margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: #2d3748;
-        }
-        .auth-form-group input {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #cbd5e0;
-            border-radius: 0.5rem;
-            box-sizing: border-box;
-            font-size: 1rem;
-        }
-        .auth-form-group input:focus {
-            outline: none;
-            border-color: #4c51bf;
-            box-shadow: 0 0 0 3px rgba(76, 81, 191, 0.2);
-        }
-        .auth-button {
-            background-color: #4c51bf;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            transition: background-color 0.3s ease;
-            width: 100%;
-            margin-top: 1rem;
-        }
-        .auth-button:hover {
-            background-color: #4338ca;
-        }
-        .toggle-auth-mode-button {
-            background: none;
-            border: none;
-            color: #4c51bf;
-            cursor: pointer;
-            font-weight: 500;
-            margin-top: 1rem;
-            text-decoration: underline;
-        }
-        .toggle-auth-mode-button:hover {
-            color: #4338ca;
-        }
-        .logout-button {
-            background-color: #ef4444; /* Red */
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            transition: background-color 0.3s ease;
-            margin-left: auto; /* Push to the right */
-        }
-        .logout-button:hover {
-            background-color: #dc2626; /* Darker red */
+            color: #555;
+            font-weight: bold;
         }
 
-        /* Pagination styles */
-        .pagination-controls {
-            display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-top: 1.5rem;
+        input[type="number"], input[type="text"], button {
+            width: 100%;
+            padding: 0.75rem;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
         }
-        .pagination-button {
-            background-color: #e2e8f0;
-            color: #4a5568;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-        }
-        .pagination-button:hover:not(.active) {
-            background-color: #cbd5e0;
-        }
-        .pagination-button.active {
-            background-color: #4c51bf;
+
+        button {
+            background-color: #007bff;
             color: white;
-            cursor: default;
+            border: none;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            transition: background-color 0.3s ease;
         }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .summary-box {
+            background-color: #e9ecef;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .summary-box h3 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .summary-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        #historyList, #budgetList, #goalsList {
+            list-style-type: none;
+            padding: 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        #historyList li, #budgetList li, #goalsList li {
+            background-color: #f8f9fa;
+            border: 1px solid #eee;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #historyList li .history-item {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        #historyList li .history-date {
+            font-size: 0.8rem;
+            color: #777;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .expense {
+            color: #dc3545;
+        }
+
+        .income {
+            color: #28a745;
+        }
+
+        .budget-progress {
+            background-color: #e9ecef;
+            border-radius: 5px;
+            margin-top: 0.5rem;
+        }
+
+        .budget-bar {
+            height: 10px;
+            background-color: #28a745;
+            border-radius: 5px;
+            transition: width 0.3s ease;
+        }
+
+        .budget-bar.over {
+            background-color: #dc3545;
+        }
+
+        .goal-progress {
+            margin-top: 0.5rem;
+        }
+
+        .goal-bar {
+            height: 10px;
+            background-color: #007bff;
+            border-radius: 5px;
+            transition: width 0.3s ease;
+        }
+
+        .goal-bar.complete {
+            background-color: #28a745;
+        }
+
     </style>
 </head>
 <body>
-    <!-- Main Application Content -->
-    <div class="container w-full md:max-w-3xl lg:max-w-4xl mx-auto p-4 sm:p-6 md:p-8">
-        <div class="flex justify-between items-center mb-8">
-            <h1 class="text-4xl font-extrabold text-gray-800">My Financial Dashboard</h1>
-        </div>
 
-        <!-- Financial Overview Section -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-10">
-            <div class="summary-card">
-                <div class="summary-label">Total Cash</div>
-                <div id="totalCash" class="summary-amount"><span class="text-gray-800">$0.00</span></div>
-            </div>
-            <div class="summary-card credit-card-debt">
-                <div class="summary-label">Total Credit Card Debt</div>
-                <div id="totalCreditCardDebt" class="summary-amount"><span class="text-gray-800">$0.00</span></div>
-            </div>
-            <div class="summary-card total-debt">
-                <div class="summary-label">Total Debt</div>
-                <div id="totalDebt" class="summary-amount"><span class="text-gray-800">$0.00</span></div>
-            </div>
-            <div class="summary-card safe-to-spend">
-                <div class="summary-label">Safe to Spend</div>
-                <div id="safeToSpend" class="summary-amount"><span class="text-gray-800">$0.00</span></div>
-            </div>
-        </div>
+    <div class="container">
+        <h1>Cogito's Financial Tracker 💰</h1>
 
-        <!-- Tabs Navigation -->
         <div class="tabs">
-            <button class="tab-button active" data-tab="transactions">Transactions</button>
-            <button class="tab-button" data-tab="accounts">Accounts</button>
-            <button class="tab-button" data-tab="creditCards">Credit Cards</button>
-            <button class="tab-button" data-tab="loansAndDebts">Loans & Debts</button>
+            <button class="tab-button active" data-tab="dashboard">Dashboard</button>
             <button class="tab-button" data-tab="history">History</button>
+            <button class="tab-button" data-tab="budget">Budget</button>
+            <button class="tab-button" data-tab="goals">Savings Goals</button>
+            <button class="tab-button" data-tab="settings">Settings</button>
         </div>
 
-        <!-- Tab Content: Transactions -->
-        <div id="transactions" class="tab-content active">
-            <!-- Cash Transactions Dropdown -->
-            <div class="transaction-dropdown">
-                <div class="transaction-dropdown-header" data-target="cashTransactionsContent">
-                    <span>Cash Transactions</span>
-                    <span class="arrow-icon">▶</span>
-                </div>
-                <div id="cashTransactionsContent" class="transaction-dropdown-content">
-                    <div id="cashTransactionsList" class="mb-4">
-                        <!-- Cash transactions will be rendered here (recent only) -->
-                    </div>
-                    <form id="addCashTransactionForm" class="bg-gray-50 p-6 rounded-xl mb-6 shadow-sm">
-                        <h3 class="text-xl font-semibold text-gray-700 mb-4">Add New Cash Transaction</h3>
-                        <div class="form-group">
-                            <label for="cashTransactionDescription">Description</label>
-                            <input type="text" id="cashTransactionDescription" placeholder="e.g., Salary, Groceries" required class="w-full">
-                        </div>
-                        <div class="form-group">
-                            <label for="cashTransactionAccount">Account</label>
-                            <select id="cashTransactionAccount" required class="w-full">
-                                <!-- Options will be dynamically loaded here -->
-                            </select>
-                            <p id="selectedAccountBalance" class="text-sm text-gray-600 mt-1"></p>
-                        </div>
-                        <div class="form-group">
-                            <label for="cashTransactionAmount">Amount ($)</label>
-                            <input type="number" id="cashTransactionAmount" placeholder="0.00" step="0.01" required class="w-full">
-                        </div>
-                        <div class="flex gap-4">
-                            <button type="submit" data-type="income" class="submit-button bg-green-500 hover:bg-green-600">Add Income</button>
-                            <button type="submit" data-type="expense" class="submit-button bg-red-500 hover:bg-red-600">Add Expense</button>
-                        </div>
-                    </form>
-                </div>
+        <div id="dashboard" class="tab-content active">
+            <h2>Current Balances</h2>
+            <div class="form-group">
+                <label for="creditCardDebt">Credit Card Debt ($)</label>
+                <input type="number" id="creditCardDebt" placeholder="Enter debt amount" step="0.01">
             </div>
-
-            <!-- Credit Card Transactions Dropdown -->
-            <div class="transaction-dropdown">
-                <div class="transaction-dropdown-header" data-target="creditCardTransactionsContent">
-                    <span>Credit Card Transactions</span>
-                    <span class="arrow-icon">▶</span>
-                </div>
-                <div id="creditCardTransactionsContent" class="transaction-dropdown-content">
-                    <div id="creditCardTransactionsList" class="mb-4">
-                        <!-- Credit card transactions will be rendered here (recent only) -->
-                    </div>
-                    <div id="creditCardActionForms">
-                        <!-- Forms for Pay/Charge will be dynamically generated here -->
-                    </div>
-                </div>
+            <div class="form-group">
+                <label for="totalCash">Total Cash ($)</label>
+                <input type="number" id="totalCash" placeholder="Enter cash amount" step="0.01">
             </div>
+            <button onclick="updateBalances()">Update Balances</button>
 
-            <!-- Transfers Dropdown -->
-            <div class="transaction-dropdown">
-                <div class="transaction-dropdown-header" data-target="transfersContent">
-                    <span>Transfers</span>
-                    <span class="arrow-icon">▶</span>
-                </div>
-                <div id="transfersContent" class="transaction-dropdown-content">
-                    <div id="transferHistoryList" class="mb-4">
-                        <!-- Transfer history will be rendered here -->
-                    </div>
-                    <form id="addTransferForm" class="bg-gray-50 p-6 rounded-xl mb-6 shadow-sm">
-                        <h3 class="text-xl font-semibold text-gray-700 mb-4">Transfer Money</h3>
-                        <div class="form-group">
-                            <label for="transferFromAccount">From Account</label>
-                            <select id="transferFromAccount" required class="w-full">
-                                <option value="">-- Select Account --</option>
-                                <!-- Accounts will be dynamically loaded here -->
-                            </select>
-                            <p id="transferFromAccountBalance" class="text-sm text-gray-600 mt-1"></p>
-                        </div>
-                        <div class="form-group">
-                            <label for="transferToAccount">To Account</label>
-                            <select id="transferToAccount" required class="w-full">
-                                <option value="">-- Select Account --</option>
-                                <!-- Accounts will be dynamically loaded here -->
-                            </select>
-                            <p id="transferToAccountBalance" class="text-sm text-gray-600 mt-1"></p>
-                        </div>
-                        <div class="form-group">
-                            <label for="transferAmount">Amount ($)</label>
-                            <input type="number" id="transferAmount" placeholder="0.00" step="0.01" required class="w-full">
-                        </div>
-                        <button type="submit" class="submit-button bg-blue-500 hover:bg-blue-600">Transfer Money</button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Loan Payments Dropdown -->
-            <div class="transaction-dropdown">
-                <div class="transaction-dropdown-header" data-target="loanPaymentsContent">
-                    <span>Loan Payments</span>
-                    <span class="arrow-icon">▶</span>
-                </div>
-                <div id="loanPaymentsContent" class="transaction-dropdown-content">
-                    <div id="loanPaymentsList" class="mb-4">
-                        <!-- Loan payments will be rendered here -->
-                    </div>
-                    <form id="addLoanPaymentForm" class="bg-gray-50 p-6 rounded-xl mb-6 shadow-sm">
-                        <h3 class="text-xl font-semibold text-gray-700 mb-4">Make a Loan Payment</h3>
-                        <div class="form-group">
-                            <label for="loanToPay">Select Loan</label>
-                            <select id="loanToPay" required class="w-full">
-                                <option value="">-- Select a Loan --</option>
-                                <!-- Loans will be dynamically loaded here -->
-                            </select>
-                            <p id="selectedLoanAmount" class="text-sm text-gray-600 mt-1"></p>
-                        </div>
-                        <div class="form-group">
-                            <label for="paymentSourceType">Payment Method</label>
-                            <select id="paymentSourceType" required class="w-full">
-                                <option value="">-- Select Type --</option>
-                                <option value="Checking">Checking Account</option>
-                                <option value="CreditCard">Credit Card</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="paymentSourceId">Select Account/Card</label>
-                            <select id="paymentSourceId" required class="w-full">
-                                <option value="">-- Select Source --</option>
-                                <!-- Accounts/Cards will be dynamically loaded here -->
-                            </select>
-                            <p id="selectedPaymentSourceBalance" class="text-sm text-gray-600 mt-1"></p>
-                        </div>
-                        <div class="form-group">
-                            <label for="loanPaymentAmount">Amount ($)</label>
-                            <input type="number" id="loanPaymentAmount" placeholder="0.00" step="0.01" required class="w-full">
-                        </div>
-                        <button type="submit" class="submit-button">Pay Loan</button>
-                    </form>
-                </div>
+            <div class="summary-box">
+                <h3>Cash Available</h3>
+                <span id="cashAvailable" class="summary-value">$0.00</span>
             </div>
         </div>
 
-        <!-- Tab Content: Accounts -->
-        <div id="accounts" class="tab-content">
-            <h2 class="section-title">Bank Accounts</h2>
-            <div id="bankAccountsList" class="mb-4">
-                <!-- Bank accounts will be rendered here -->
-            </div>
-            <form id="addBankAccountForm" class="bg-gray-50 p-6 rounded-xl mb-6 shadow-sm">
-                <h3 class="text-xl font-semibold text-gray-700 mb-4">Add New Bank Account</h3>
-                <div class="form-group">
-                    <label for="bankAccountName">Account Name</label>
-                    <input type="text" id="bankAccountName" placeholder="e.g., Checking, Savings" required class="w-full">
-                </div>
-                <div class="form-group">
-                    <label for="bankAccountType">Account Type</label>
-                    <select id="bankAccountType" required class="w-full">
-                        <option value="Checking">Checking</option>
-                        <option value="Savings">Savings</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="bankAccountBalance">Current Balance ($)</label>
-                    <input type="number" id="bankAccountBalance" placeholder="0.00" step="0.01" required class="w-full">
-                </div>
-                <button type="submit" class="submit-button">Add Bank Account</button>
-            </form>
-        </div>
-
-        <!-- Tab Content: Credit Cards -->
-        <div id="creditCards" class="tab-content">
-            <h2 class="section-title">Credit Cards</h2>
-            <div id="creditCardsList" class="mb-4">
-                <!-- Credit cards will be rendered here -->
-            </div>
-            <form id="addCreditCardForm" class="bg-gray-50 p-6 rounded-xl mb-6 shadow-sm">
-                <h3 class="text-xl font-semibold text-gray-700 mb-4">Add New Credit Card</h3>
-                <div class="form-group">
-                    <label for="creditCardName">Card Name</label>
-                    <input type="text" id="creditCardName" placeholder="e.g., Visa, Mastercard" required class="w-full">
-                </div>
-                <div class="form-group">
-                    <label for="creditCardLimit">Credit Limit ($)</label>
-                    <input type="number" id="creditCardLimit" placeholder="0.00" step="0.01" required class="w-full">
-                </div>
-                <div class="form-group">
-                    <label for="creditCardBalance">Current Balance ($)</label>
-                    <input type="number" id="creditCardBalance" placeholder="0.00" step="0.01" required class="w-full">
-                </div>
-                <button type="submit" class="submit-button">Add Credit Card</button>
-            </form>
-        </div>
-
-        <!-- Tab Content: Loans & Debts (Consolidated) -->
-        <div id="loansAndDebts" class="tab-content">
-            <h2 class="section-title">Loans</h2>
-            <div id="loansList" class="mb-4">
-                <!-- Loans will be rendered here -->
-            </div>
-            <form id="addLoanForm" class="bg-gray-50 p-6 rounded-xl mb-6 shadow-sm">
-                <h3 class="text-xl font-semibold text-gray-700 mb-4">Add New Loan</h3>
-                <div class="form-group">
-                    <label for="loanName">Loan Name</label>
-                    <input type="text" id="loanName" placeholder="e.g., Car Loan, Student Loan" required class="w-full">
-                </div>
-                <div class="form-group">
-                    <label for="loanAmount">Outstanding Amount ($)</label>
-                    <input type="number" id="loanAmount" placeholder="0.00" step="0.01" required class="w-full">
-                </div>
-                <div class="form-group">
-                    <label for="loanMonthlyPayment">Monthly Payment ($)</label>
-                    <input type="number" id="loanMonthlyPayment" placeholder="0.00" step="0.01" required class="w-full">
-                </div>
-                <button type="submit" class="submit-button">Add Loan</button>
-            </form>
-
-            <h2 class="section-title mt-8">Other Debts</h2>
-            <div id="otherDebts" class="tab-content">
-            <h2 class="section-title">Other Debts</h2>
-            <div id="otherDebtsList" class="mb-4">
-                <!-- Other debts will be rendered here -->
-            </div>
-            <form id="addOtherDebtForm" class="bg-gray-50 p-6 rounded-xl mb-6 shadow-sm">
-                <h3 class="text-xl font-semibold text-gray-700 mb-4">Add New Other Debt</h3>
-                <div class="form-group">
-                    <label for="otherDebtName">Debt Name</label>
-                    <input type="text" id="otherDebtName" placeholder="e.g., Medical Bill, Friend Loan" required class="w-full">
-                </div>
-                <div class="form-group">
-                    <label for="otherDebtAmount">Outstanding Amount ($)</label>
-                    <input type="number" id="otherDebtAmount" placeholder="0.00" step="0.01" required class="w-full">
-                </div>
-                <button type="submit" class="submit-button">Add Other Debt</button>
-            </form>
-        </div>
-
-        <!-- Tab Content: History -->
         <div id="history" class="tab-content">
-            <h2 class="section-title">Full Transaction History</h2>
-            <div id="historyList" class="mb-4">
-                <!-- Full transaction history will be rendered here -->
+            <h2>Transaction History</h2>
+            <div class="form-group">
+                <label for="transactionAmount">Amount ($)</label>
+                <input type="number" id="transactionAmount" placeholder="e.g., -25.50 for expense" step="0.01">
             </div>
-            <div id="historyPagination" class="pagination-controls">
-                <!-- Pagination buttons will be rendered here -->
+            <div class="form-group">
+                <label for="transactionDescription">Description</label>
+                <input type="text" id="transactionDescription" placeholder="e.g., Groceries, Paycheck">
             </div>
+            <button onclick="addTransaction()">Add Transaction</button>
+            <ul id="historyList"></ul>
         </div>
 
-    </div>
+        <div id="budget" class="tab-content">
+            <h2>Monthly Budget</h2>
+            <div class="form-group">
+                <label for="budgetItem">Category</label>
+                <input type="text" id="budgetItem" placeholder="e.g., Food, Entertainment">
+            </div>
+            <div class="form-group">
+                <label for="budgetLimit">Monthly Limit ($)</label>
+                <input type="number" id="budgetLimit" placeholder="e.g., 500" step="0.01">
+            </div>
+            <button onclick="addBudget()">Add Budget</button>
+            <ul id="budgetList"></ul>
+        </div>
 
-    <!-- Custom Modal for Messages -->
-    <div id="messageModal" class="modal">
-        <div class="modal-content">
-            <p id="modalMessage" class="text-lg text-gray-800"></p>
-            <button id="modalCloseButton" class="modal-close-button">Close</button>
+        <div id="goals" class="tab-content">
+            <h2>Savings Goals</h2>
+            <div class="form-group">
+                <label for="goalItem">Goal</label>
+                <input type="text" id="goalItem" placeholder="e.g., New Laptop, Vacation Fund">
+            </div>
+            <div class="form-group">
+                <label for="goalTarget">Target Amount ($)</label>
+                <input type="number" id="goalTarget" placeholder="e.g., 1200" step="0.01">
+            </div>
+            <div class="form-group">
+                <label for="goalSaved">Amount Saved ($)</label>
+                <input type="number" id="goalSaved" placeholder="e.g., 200" step="0.01">
+            </div>
+            <button onclick="addGoal()">Add Savings Goal</button>
+            <ul id="goalsList"></ul>
+        </div>
+
+        <div id="settings" class="tab-content">
+            <h2>Settings & Data Management</h2>
+            <button onclick="clearAllData()">Clear All Data</button>
+            <p style="font-size:0.9rem; color:#888; margin-top: 1rem;">
+                This will permanently delete all your financial data from this device.
+            </p>
         </div>
     </div>
 
     <script>
-        // --- Data Persistence with localStorage ---
-        const LOCAL_STORAGE_KEY = 'financialTrackerData';
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('.tab-button');
+            const contents = document.querySelectorAll('.tab-content');
 
-        // Function to save the entire data object to localStorage
-        function saveDataToLocalStorage() {
-            try {
-                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(financialData));
-            } catch (error) {
-                console.error('Error saving data to local storage:', error);
-                showMessage('An error occurred while saving your data.');
-            }
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(item => item.classList.remove('active'));
+                    contents.forEach(item => item.classList.remove('active'));
+
+                    tab.classList.add('active');
+                    const targetTab = tab.getAttribute('data-tab');
+                    document.getElementById(targetTab).classList.add('active');
+                    
+                    // Re-render certain tabs on switch
+                    if (targetTab === 'history') renderHistory();
+                    if (targetTab === 'budget') renderBudgets();
+                    if (targetTab === 'goals') renderGoals();
+                });
+            });
+
+            // Initial render
+            loadData();
+        });
+
+        function loadData() {
+            const debt = localStorage.getItem('creditCardDebt') || 0;
+            const cash = localStorage.getItem('totalCash') || 0;
+            const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+            const budgets = JSON.parse(localStorage.getItem('budgets')) || [];
+            const goals = JSON.parse(localStorage.getItem('goals')) || [];
+
+            document.getElementById('creditCardDebt').value = parseFloat(debt).toFixed(2);
+            document.getElementById('totalCash').value = parseFloat(cash).toFixed(2);
+            updateCashAvailable();
+            renderHistory();
+            renderBudgets();
+            renderGoals();
         }
 
-        // Function to load the entire data object from localStorage
-        function loadDataFromLocalStorage() {
-            try {
-                const storedData = localStorage.getItem(LOCAL_STORAGE_KEY);
-                if (storedData) {
-                    const parsedData = JSON.parse(storedData);
-                    // Convert string dates back to Date objects for sorting
-                    parsedData.cashTransactions.forEach(tx => tx.transaction_date = new Date(tx.transaction_date));
-                    parsedData.creditTransactions.forEach(tx => tx.transaction_date = new Date(tx.transaction_date));
-                    parsedData.loanPayments.forEach(tx => tx.transaction_date = new Date(tx.transaction_date));
-                    parsedData.transfers.forEach(tx => tx.transaction_date = new Date(tx.transaction_date));
-                    return parsedData;
-                }
-            } catch (error) {
-                console.error('Error loading data from local storage:', error);
-                showMessage('An error occurred while loading your data. Starting with a fresh slate.');
+        function saveData() {
+            const debt = parseFloat(document.getElementById('creditCardDebt').value) || 0;
+            const cash = parseFloat(document.getElementById('totalCash').value) || 0;
+
+            localStorage.setItem('creditCardDebt', debt);
+            localStorage.setItem('totalCash', cash);
+            updateCashAvailable();
+        }
+
+        function updateBalances() {
+            saveData();
+            alert("Balances updated successfully!");
+        }
+
+        function updateCashAvailable() {
+            const debt = parseFloat(localStorage.getItem('creditCardDebt')) || 0;
+            const cash = parseFloat(localStorage.getItem('totalCash')) || 0;
+            const available = cash - debt;
+            document.getElementById('cashAvailable').textContent = `$${available.toFixed(2)}`;
+            document.getElementById('cashAvailable').style.color = available >= 0 ? '#28a745' : '#dc3545';
+        }
+
+        function addTransaction() {
+            const amount = parseFloat(document.getElementById('transactionAmount').value);
+            const description = document.getElementById('transactionDescription').value.trim();
+
+            if (isNaN(amount) || description === '') {
+                alert("Please enter a valid amount and description.");
+                return;
             }
-            // Return default structure if no data found or error occurred
-            return {
-                bankAccounts: [],
-                creditCards: [],
-                loans: [],
-                otherDebts: [],
-                cashTransactions: [],
-                creditTransactions: [],
-                loanPayments: [],
-                transfers: [],
-                mainCheckingAccountId: null
+
+            const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+            const newTransaction = {
+                amount: amount,
+                description: description,
+                date: new Date().toISOString()
             };
-        }
+            transactions.unshift(newTransaction); // Add to the beginning
+            localStorage.setItem('transactions', JSON.stringify(transactions));
 
-        // --- Utility Functions ---
-        function generateUniqueId() {
-            return '_' + Math.random().toString(36).substr(2, 9);
-        }
+            // Update total cash
+            let currentCash = parseFloat(localStorage.getItem('totalCash')) || 0;
+            currentCash += amount;
+            localStorage.setItem('totalCash', currentCash);
+            document.getElementById('totalCash').value = currentCash.toFixed(2);
+            updateCashAvailable();
 
-        // Utility function to show custom modal messages
-        function showMessage(message) {
-            const modal = document.getElementById('messageModal');
-            const modalMessage = document.getElementById('modalMessage');
-            modalMessage.textContent = message;
-            modal.style.display = 'flex'; // Use flex to center content
-        }
-
-        // Close modal when close button is clicked
-        document.getElementById('modalCloseButton').addEventListener('click', () => {
-            document.getElementById('messageModal').style.display = 'none';
-        });
-
-        // Close modal when clicking outside of it
-        window.addEventListener('click', (event) => {
-            const modal = document.getElementById('messageModal');
-            if (event.target === modal) {
-                modal.style.display = 'none';
-            }
-        });
-
-        // Format currency
-        function formatCurrency(amount) {
-            // Ensure amount is a number before formatting
-            const numericAmount = parseFloat(amount);
-            if (isNaN(numericAmount)) {
-                return "$0.00"; // Default to 0 if not a valid number
-            }
-            return new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD'
-            }).format(numericAmount);
-        }
-
-        // --- Main Data and State ---
-        let financialData = loadDataFromLocalStorage();
-        let currentHistoryPage = 1;
-        const itemsPerPage = 15;
-
-        // --- UI Rendering Functions ---
-        function updateSummary() {
-            let totalCash = financialData.bankAccounts
-                .filter(account => account.type === 'Checking')
-                .reduce((sum, account) => sum + parseFloat(account.balance || 0), 0);
-
-            let totalCreditCardDebt = financialData.creditCards.reduce((sum, card) => sum + parseFloat(card.balance || 0), 0);
-            let totalLoans = financialData.loans.reduce((sum, loan) => sum + parseFloat(loan.current_amount || 0), 0);
-            let totalOtherDebts = financialData.otherDebts.reduce((sum, debt) => sum + parseFloat(debt.current_amount || 0), 0);
-
-            let totalDebt = totalCreditCardDebt + totalLoans + totalOtherDebts;
-            let safeToSpend = totalCash - totalCreditCardDebt;
-
-            document.getElementById('totalCash').textContent = formatCurrency(totalCash);
-            document.getElementById('totalCreditCardDebt').textContent = formatCurrency(totalCreditCardDebt);
-            document.getElementById('totalDebt').textContent = formatCurrency(totalDebt);
-            document.getElementById('safeToSpend').textContent = formatCurrency(safeToSpend);
-        }
-
-        function getCreditUtilizationBarHtml(balance, limit) {
-            const utilization = limit > 0 ? (balance / limit) * 100 : 0;
-            let barColorClass = 'bg-green-500';
-            if (utilization > 60) {
-                barColorClass = 'bg-red-500';
-            } else if (utilization > 30) {
-                barColorClass = 'bg-yellow-500';
-            }
-            const barWidth = Math.min(utilization, 100);
-            const percentageText = `${utilization.toFixed(1)}%`;
-
-            return `
-                <div class="credit-utilization-bar">
-                    <div class="credit-utilization-fill ${barColorClass}" style="width: ${barWidth}%;"></div>
-                </div>
-                <div class="credit-utilization-text">${percentageText} utilized</div>
-            `;
-        }
-
-        function getLoanPaidOffBarHtml(originalAmount, currentAmount) {
-            const paidOffAmount = originalAmount - currentAmount;
-            const percentagePaidOff = originalAmount > 0 ? (paidOffAmount / originalAmount) * 100 : 0;
-            const barWidth = Math.min(percentagePaidOff, 100);
-            const percentageText = `${percentagePaidOff.toFixed(1)}% paid off`;
-
-            return `
-                <div class="loan-paid-off-bar">
-                    <div class="loan-paid-off-fill" style="width: ${barWidth}%;"></div>
-                </div>
-                <div class="loan-paid-off-text">${percentageText}</div>
-            `;
-        }
-
-        function renderBankAccounts() {
-            const listElement = document.getElementById('bankAccountsList');
-            listElement.innerHTML = '';
-            if (financialData.bankAccounts.length === 0) {
-                listElement.innerHTML = '<p class="text-gray-500 italic">No bank accounts added yet.</p>';
-            } else {
-                financialData.bankAccounts.forEach(account => {
-                    const div = document.createElement('div');
-                    div.className = 'item-card flex-col sm:flex-row items-start sm:items-center';
-                    let mainButtonHtml = '';
-                    if (account.type === 'Checking') {
-                        const isActive = financialData.mainCheckingAccountId === account.id ? 'active' : '';
-                        mainButtonHtml = `<button class="main-account-button ${isActive}" data-id="${account.id}">
-                                            ${isActive ? 'Main Account' : 'Set as Main'}
-                                          </button>`;
-                    }
-                    div.innerHTML = `
-                        <span class="item-name">${account.name} (${account.type})</span>
-                        <span class="item-amount">${formatCurrency(account.balance)}</span>
-                        <div class="flex items-center mt-2 sm:mt-0">
-                            ${mainButtonHtml}
-                            <button class="delete-button" data-id="${account.id}" data-type="bankAccount">Delete</button>
-                        </div>
-                    `;
-                    listElement.appendChild(div);
-                });
-            }
-        }
-
-        function renderCreditCards() {
-            const listElement = document.getElementById('creditCardsList');
-            listElement.innerHTML = '';
-            const creditCardActionForms = document.getElementById('creditCardActionForms');
-            creditCardActionForms.innerHTML = '';
-
-            if (financialData.creditCards.length === 0) {
-                listElement.innerHTML = '<p class="text-gray-500 italic">No credit cards added yet.</p>';
-                creditCardActionForms.innerHTML = '<p class="text-gray-500 italic">Add credit cards to enable transactions.</p>';
-            } else {
-                financialData.creditCards.forEach(card => {
-                    const div = document.createElement('div');
-                    div.className = 'item-card flex-col items-start';
-                    div.innerHTML = `
-                        <div class="flex justify-between items-center w-full">
-                            <div class="credit-card-display">
-                                <span class="item-name">${card.name}</span>
-                                <span class="item-amount">Balance: ${formatCurrency(card.balance)} / Limit: ${formatCurrency(card.credit_limit)}</span>
-                            </div>
-                            <button class="delete-button" data-id="${card.id}" data-type="creditCard">Delete</button>
-                        </div>
-                        ${getCreditUtilizationBarHtml(card.balance, card.credit_limit)}
-                    `;
-                    listElement.appendChild(div);
-
-                    const formDiv = document.createElement('div');
-                    formDiv.className = 'bg-gray-50 p-6 rounded-xl mb-6 shadow-sm';
-                    formDiv.innerHTML = `
-                        <h3 class="text-xl font-semibold text-gray-700 mb-4">${card.name} Transactions</h3>
-                        <p class="text-sm text-gray-600 mb-2">Current Balance: ${formatCurrency(card.balance)}</p>
-                        ${getCreditUtilizationBarHtml(card.balance, card.credit_limit)}
-                        <div class="form-group mt-4">
-                            <label for="creditAmount_${card.id}">Amount ($)</label>
-                            <input type="number" id="creditAmount_${card.id}" placeholder="0.00" step="0.01" required class="w-full">
-                        </div>
-                        <div class="flex flex-col sm:flex-row gap-4 mt-4">
-                            <button type="button" class="submit-button pay-button w-full sm:w-auto" data-card-id="${card.id}" data-action="pay">Pay</button>
-                            <button type="button" class="submit-button charge-button w-full sm:w-auto" data-card-id="${card.id}" data-action="charge">Charge</button>
-                        </div>
-                    `;
-                    creditCardActionForms.appendChild(formDiv);
-                });
-            }
-        }
-
-        function renderLoansAndDebts() {
-            const loansListElement = document.getElementById('loansList');
-            const otherDebtsListElement = document.getElementById('otherDebtsList');
-
-            loansListElement.innerHTML = '';
-            otherDebtsListElement.innerHTML = '';
-
-            if (financialData.loans.length === 0) {
-                loansListElement.innerHTML = '<p class="text-gray-500 italic">No loans added yet.</p>';
-            } else {
-                financialData.loans.forEach(loan => {
-                    const div = document.createElement('div');
-                    div.className = 'item-card flex-col items-start';
-                    div.innerHTML = `
-                        <div class="flex justify-between items-center w-full">
-                            <div class="loan-display">
-                                <span class="item-name">${loan.name}</span>
-                                <span class="item-amount">Outstanding: ${formatCurrency(loan.current_amount)} (Original: ${formatCurrency(loan.original_amount)})</span>
-                                <span class="item-amount">Monthly Payment: ${formatCurrency(loan.monthly_payment)}</span>
-                            </div>
-                            <button class="delete-button" data-id="${loan.id}" data-type="loan">Delete</button>
-                        </div>
-                        ${getLoanPaidOffBarHtml(loan.original_amount, loan.current_amount)}
-                    `;
-                    loansListElement.appendChild(div);
-                });
-            }
-
-            if (financialData.otherDebts.length === 0) {
-                otherDebtsListElement.innerHTML = '<p class="text-gray-500 italic">No other debts added yet.</p>';
-            } else {
-                financialData.otherDebts.forEach(debt => {
-                    const div = document.createElement('div');
-                    div.className = 'item-card flex-col items-start';
-                    div.innerHTML = `
-                        <div class="flex justify-between items-center w-full">
-                            <div class="loan-display">
-                                <span class="item-name">${debt.name}</span>
-                                <span class="item-amount">Outstanding: ${formatCurrency(debt.current_amount)} (Original: ${formatCurrency(debt.original_amount)})</span>
-                            </div>
-                            <button class="delete-button" data-id="${debt.id}" data-type="otherDebt">Delete</button>
-                        </div>
-                        ${getLoanPaidOffBarHtml(debt.original_amount, debt.original_amount - debt.current_amount)}
-                    `;
-                    otherDebtsListElement.appendChild(div);
-                });
-            }
+            document.getElementById('transactionAmount').value = '';
+            document.getElementById('transactionDescription').value = '';
+            renderHistory();
         }
 
         function renderHistory() {
-            const listElement = document.getElementById('historyList');
-            const paginationControls = document.getElementById('historyPagination');
-            listElement.innerHTML = '';
-            paginationControls.innerHTML = '';
+            const list = document.getElementById('historyList');
+            list.innerHTML = '';
+            const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
 
-            const allTransactions = [
-                ...financialData.cashTransactions.map(tx => ({ ...tx, category: 'cash' })),
-                ...financialData.creditTransactions.map(tx => ({ ...tx, category: 'credit' })),
-                ...financialData.loanPayments.map(tx => ({ ...tx, category: 'loan' })),
-                ...financialData.transfers.map(tx => ({ ...tx, category: 'transfer' }))
-            ];
+            transactions.forEach((tx, index) => {
+                const listItem = document.createElement('li');
+                const amountClass = tx.amount < 0 ? 'expense' : 'income';
+                const formattedAmount = `$${Math.abs(tx.amount).toFixed(2)}`;
+                const formattedDate = new Date(tx.date).toLocaleDateString('en-US', {
+                    year: 'numeric', month: 'short', day: 'numeric'
+                });
 
-            if (allTransactions.length === 0) {
-                listElement.innerHTML = '<p class="text-gray-500 italic">No transaction history yet.</p>';
-                return;
-            }
-
-            const sortedTransactions = allTransactions.sort((a, b) => new Date(b.transaction_date) - new Date(a.transaction_date));
-
-            const totalPages = Math.ceil(sortedTransactions.length / itemsPerPage);
-
-            const startIndex = (currentHistoryPage - 1) * itemsPerPage;
-            const endIndex = startIndex + itemsPerPage;
-            const transactionsToDisplay = sortedTransactions.slice(startIndex, endIndex);
-
-            transactionsToDisplay.forEach(tx => {
-                const div = document.createElement('div');
-                let displayDetails = '';
-                let amountText = formatCurrency(tx.amount || tx.payment_amount);
-                let itemClass = '';
-                let iconHtml = '';
-
-                if (tx.category === 'cash') {
-                    const account = financialData.bankAccounts.find(acc => acc.id === tx.account_id);
-                    const accountName = account ? account.name : 'Unknown Account';
-                    displayDetails = `${new Date(tx.transaction_date).toLocaleDateString()} - ${tx.description} (${accountName})`;
-                    itemClass = tx.type;
-                } else if (tx.category === 'credit') {
-                    const card = financialData.creditCards.find(c => c.id === tx.card_id);
-                    const cardName = card ? card.name : 'Unknown Card';
-                    displayDetails = `${new Date(tx.transaction_date).toLocaleDateString()} - ${tx.type === 'charge' ? 'Charge' : 'Payment'} on ${cardName}`;
-                    itemClass = tx.type === 'charge' ? 'expense' : 'income';
-                } else if (tx.category === 'loan') {
-                    const loan = financialData.loans.find(l => l.id === tx.loan_id) || financialData.otherDebts.find(od => od.id === tx.loan_id);
-                    const loanName = loan ? loan.name : 'Unknown Loan';
-                    let paymentSource = 'Unknown Source';
-                    if (tx.payment_method_type === 'Checking') {
-                        const account = financialData.bankAccounts.find(acc => acc.id === tx.payment_method_id);
-                        paymentSource = account ? account.name : 'Unknown Account';
-                    } else if (tx.payment_method_type === 'CreditCard') {
-                        const card = financialData.creditCards.find(c => c.id === tx.payment_method_id);
-                        paymentSource = card ? card.name : 'Unknown Card';
-                    }
-                    displayDetails = `${new Date(tx.transaction_date).toLocaleDateString()} - Payment for ${loanName} via ${paymentSource}`;
-                    itemClass = 'expense';
-                } else if (tx.category === 'transfer') {
-                    const fromAccount = financialData.bankAccounts.find(acc => acc.id === tx.from_account_id);
-                    const toAccount = financialData.bankAccounts.find(acc => acc.id === tx.to_account_id);
-                    const fromName = fromAccount ? fromAccount.name : 'Unknown Account';
-                    const toName = toAccount ? toAccount.name : 'Unknown Account';
-                    displayDetails = `${new Date(tx.transaction_date).toLocaleDateString()} - Transfer from ${fromName} to ${toName}`;
-                    itemClass = 'transfer';
-                    iconHtml = '<span class="icon mr-2">↔</span>';
-                }
-
-                div.className = `transaction-item ${itemClass}`;
-                div.innerHTML = `
-                    <span class="description">${iconHtml}${displayDetails}</span>
-                    <span class="amount">${amountText}</span>
-                    <button class="delete-button" data-id="${tx.id}" data-type="historyTransaction" data-category="${tx.category}">Delete</button>
+                listItem.innerHTML = `
+                    <div class="history-item">
+                        <span>${tx.description}</span>
+                        <span class="history-date">${formattedDate}</span>
+                    </div>
+                    <span class="${amountClass}">${tx.amount < 0 ? '-' : '+'}${formattedAmount}</span>
+                    <button class="delete-btn" onclick="deleteTransaction(${index})">X</button>
                 `;
-                listElement.appendChild(div);
+                list.appendChild(listItem);
             });
-
-            if (totalPages > 1) {
-                for (let i = 1; i <= totalPages; i++) {
-                    const button = document.createElement('button');
-                    button.textContent = i;
-                    button.className = `pagination-button ${i === currentHistoryPage ? 'active' : ''}`;
-                    button.addEventListener('click', () => {
-                        currentHistoryPage = i;
-                        renderHistory();
-                    });
-                    paginationControls.appendChild(button);
-                }
-            }
         }
 
-        function populateCashTransactionAccountDropdown() {
-            const selectElement = document.getElementById('cashTransactionAccount');
-            const selectedAccountBalanceSpan = document.getElementById('selectedAccountBalance');
-            selectElement.innerHTML = '';
+        function deleteTransaction(index) {
+            let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+            
+            // Revert cash change
+            let currentCash = parseFloat(localStorage.getItem('totalCash')) || 0;
+            currentCash -= transactions[index].amount;
+            localStorage.setItem('totalCash', currentCash);
+            document.getElementById('totalCash').value = currentCash.toFixed(2);
+            updateCashAvailable();
 
-            const checkingAccounts = financialData.bankAccounts.filter(account => account.type === 'Checking');
-
-            if (checkingAccounts.length === 0) {
-                const option = document.createElement('option');
-                option.value = '';
-                option.textContent = 'No Checking Accounts Available';
-                option.disabled = true;
-                option.selected = true;
-                selectElement.appendChild(option);
-                document.querySelectorAll('#addCashTransactionForm button[type="submit"]').forEach(btn => btn.disabled = true);
-                selectedAccountBalanceSpan.textContent = '';
-            } else {
-                document.querySelectorAll('#addCashTransactionForm button[type="submit"]').forEach(btn => btn.disabled = false);
-                checkingAccounts.forEach(account => {
-                    const option = document.createElement('option');
-                    option.value = account.id;
-                    option.textContent = `${account.name}`;
-                    if (account.id === financialData.mainCheckingAccountId) {
-                        option.selected = true;
-                    }
-                    selectElement.appendChild(option);
-                });
-                updateSelectedAccountBalance();
-            }
-        }
-
-        function updateSelectedAccountBalance() {
-            const selectElement = document.getElementById('cashTransactionAccount');
-            const selectedAccountBalanceSpan = document.getElementById('selectedAccountBalance');
-            const selectedAccountId = selectElement.value;
-            const selectedAccount = financialData.bankAccounts.find(acc => acc.id === selectedAccountId);
-
-            if (selectedAccount) {
-                selectedAccountBalanceSpan.textContent = `Current Balance: ${formatCurrency(selectedAccount.balance)}`;
-            } else {
-                selectedAccountBalanceSpan.textContent = '';
-            }
-        }
-        document.getElementById('cashTransactionAccount').addEventListener('change', updateSelectedAccountBalance);
-
-        function populateTransferAccountDropdowns() {
-            const fromSelect = document.getElementById('transferFromAccount');
-            const toSelect = document.getElementById('transferToAccount');
-            fromSelect.innerHTML = '<option value="">-- Select Account --</option>';
-            toSelect.innerHTML = '<option value="">-- Select Account --</option>';
-
-            if (financialData.bankAccounts.length === 0) {
-                const disabledOption = '<option value="" disabled>No Accounts Available</option>';
-                fromSelect.innerHTML += disabledOption;
-                toSelect.innerHTML += disabledOption;
-                document.getElementById('addTransferForm').querySelector('button[type="submit"]').disabled = true;
-            } else {
-                document.getElementById('addTransferForm').querySelector('button[type="submit"]').disabled = false;
-                financialData.bankAccounts.forEach(account => {
-                    const option = document.createElement('option');
-                    option.value = account.id;
-                    option.textContent = `${account.name} (${account.type})`;
-                    fromSelect.appendChild(option.cloneNode(true));
-                    toSelect.appendChild(option);
-                });
-            }
-            updateTransferAccountBalances();
-        }
-
-        function updateTransferAccountBalances() {
-            const fromSelect = document.getElementById('transferFromAccount');
-            const toSelect = document.getElementById('transferToAccount');
-            const fromBalanceSpan = document.getElementById('transferFromAccountBalance');
-            const toBalanceSpan = document.getElementById('transferToAccountBalance');
-
-            const fromAccount = financialData.bankAccounts.find(acc => acc.id === fromSelect.value);
-            const toAccount = financialData.bankAccounts.find(acc => acc.id === toSelect.value);
-
-            fromBalanceSpan.textContent = fromAccount ? `Current Balance: ${formatCurrency(fromAccount.balance)}` : '';
-            toBalanceSpan.textContent = toAccount ? `Current Balance: ${formatCurrency(toAccount.balance)}` : '';
-        }
-        document.getElementById('transferFromAccount').addEventListener('change', updateTransferAccountBalances);
-        document.getElementById('transferToAccount').addEventListener('change', updateTransferAccountBalances);
-
-        function populateLoanToPayDropdown() {
-            const selectElement = document.getElementById('loanToPay');
-            selectElement.innerHTML = '<option value="">-- Select a Loan --</option>';
-
-            const allLoansAndDebts = [...financialData.loans, ...financialData.otherDebts];
-
-            if (allLoansAndDebts.length === 0) {
-                const option = document.createElement('option');
-                option.value = '';
-                option.textContent = 'No Loans/Debts Available';
-                option.disabled = true;
-                selectElement.appendChild(option);
-                document.getElementById('addLoanPaymentForm').querySelector('button[type="submit"]').disabled = true;
-            } else {
-                document.getElementById('addLoanPaymentForm').querySelector('button[type="submit"]').disabled = false;
-                allLoansAndDebts.forEach(item => {
-                    const option = document.createElement('option');
-                    option.value = item.id;
-                    option.textContent = `${item.name} (Outstanding: ${formatCurrency(item.current_amount)})`;
-                    selectElement.appendChild(option);
-                });
-            }
-            updateSelectedLoanAmount();
-        }
-
-        function updateSelectedLoanAmount() {
-            const selectElement = document.getElementById('loanToPay');
-            const selectedLoanAmountSpan = document.getElementById('selectedLoanAmount');
-            const selectedLoanId = selectElement.value;
-            const selectedLoan = financialData.loans.find(l => l.id === selectedLoanId) || financialData.otherDebts.find(od => od.id === selectedLoanId);
-
-            if (selectedLoan) {
-                selectedLoanAmountSpan.textContent = `Outstanding: ${formatCurrency(selectedLoan.current_amount)}`;
-            } else {
-                selectedLoanAmountSpan.textContent = '';
-            }
-        }
-        document.getElementById('loanToPay').addEventListener('change', updateSelectedLoanAmount);
-
-        function populatePaymentSourceDropdown() {
-            const sourceType = document.getElementById('paymentSourceType').value;
-            const sourceIdSelect = document.getElementById('paymentSourceId');
-            sourceIdSelect.innerHTML = '<option value="">-- Select Source --</option>';
-
-            const selectedPaymentSourceBalanceSpan = document.getElementById('selectedPaymentSourceBalance');
-            selectedPaymentSourceBalanceSpan.textContent = '';
-
-            if (sourceType === 'Checking') {
-                const checkingAccounts = financialData.bankAccounts.filter(acc => acc.type === 'Checking');
-                if (checkingAccounts.length === 0) {
-                    const option = document.createElement('option');
-                    option.value = '';
-                    option.textContent = 'No Checking Accounts';
-                    option.disabled = true;
-                    sourceIdSelect.appendChild(option);
-                } else {
-                    checkingAccounts.forEach(account => {
-                        const option = document.createElement('option');
-                        option.value = account.id;
-                        option.textContent = account.name;
-                        sourceIdSelect.appendChild(option);
-                    });
-                }
-            } else if (sourceType === 'CreditCard') {
-                if (financialData.creditCards.length === 0) {
-                    const option = document.createElement('option');
-                    option.value = '';
-                    option.textContent = 'No Credit Cards';
-                    option.disabled = true;
-                    sourceIdSelect.appendChild(option);
-                } else {
-                    financialData.creditCards.forEach(card => {
-                        const option = document.createElement('option');
-                        option.value = card.id;
-                        option.textContent = card.name;
-                        sourceIdSelect.appendChild(option);
-                    });
-                }
-            }
-            updateSelectedPaymentSourceBalance();
-        }
-        document.getElementById('paymentSourceType').addEventListener('change', populatePaymentSourceDropdown);
-
-        function updateSelectedPaymentSourceBalance() {
-            const sourceType = document.getElementById('paymentSourceType').value;
-            const sourceId = document.getElementById('paymentSourceId').value;
-            const selectedPaymentSourceBalanceSpan = document.getElementById('selectedPaymentSourceBalance');
-            selectedPaymentSourceBalanceSpan.textContent = '';
-
-            if (sourceType === 'Checking') {
-                const account = financialData.bankAccounts.find(acc => acc.id === sourceId);
-                if (account) {
-                    selectedPaymentSourceBalanceSpan.textContent = `Current Balance: ${formatCurrency(account.balance)}`;
-                }
-            } else if (sourceType === 'CreditCard') {
-                const card = financialData.creditCards.find(c => c.id === sourceId);
-                if (card) {
-                    selectedPaymentSourceBalanceSpan.textContent = `Current Balance: ${formatCurrency(card.balance)}`;
-                }
-            }
-        }
-        document.getElementById('paymentSourceId').addEventListener('change', updateSelectedPaymentSourceBalance);
-
-        // Function to refresh all displayed data
-        function refreshUI() {
-            financialData = loadDataFromLocalStorage();
-            updateSummary();
-            renderBankAccounts();
-            renderCreditCards();
-            renderLoansAndDebts();
+            transactions.splice(index, 1);
+            localStorage.setItem('transactions', JSON.stringify(transactions));
             renderHistory();
-            populateCashTransactionAccountDropdown();
-            populateTransferAccountDropdowns();
-            populateLoanToPayDropdown();
-            populatePaymentSourceDropdown();
-            saveDataToLocalStorage();
         }
 
-        // --- Event Listeners and Logic ---
-        document.addEventListener('DOMContentLoaded', () => {
-            refreshUI(); // Initial data load and UI render
-        });
+        function addBudget() {
+            const category = document.getElementById('budgetItem').value.trim();
+            const limit = parseFloat(document.getElementById('budgetLimit').value);
+            if (category === '' || isNaN(limit)) {
+                alert("Please enter a valid category and limit.");
+                return;
+            }
 
-        // Tab Switching Logic
-        const tabButtons = document.querySelectorAll('.tab-button');
-        const tabContents = document.querySelectorAll('.tab-content');
+            const budgets = JSON.parse(localStorage.getItem('budgets')) || [];
+            const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+            
+            const newBudget = { category, limit, spent: 0 };
+            budgets.push(newBudget);
+            localStorage.setItem('budgets', JSON.stringify(budgets));
+            
+            document.getElementById('budgetItem').value = '';
+            document.getElementById('budgetLimit').value = '';
+            renderBudgets();
+        }
+        
+        function renderBudgets() {
+            const list = document.getElementById('budgetList');
+            list.innerHTML = '';
+            const budgets = JSON.parse(localStorage.getItem('budgets')) || [];
+            const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+            
+            budgets.forEach((budget, index) => {
+                let spent = 0;
+                transactions.forEach(tx => {
+                    if (tx.description.toLowerCase().includes(budget.category.toLowerCase())) {
+                        spent += (tx.amount < 0) ? Math.abs(tx.amount) : 0;
+                    }
+                });
 
-        tabButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                tabButtons.forEach(btn => btn.classList.remove('active'));
-                tabContents.forEach(content => content.classList.remove('active'));
-
-                button.classList.add('active');
-                document.getElementById(button.dataset.tab).classList.add('active');
-
-                if (button.dataset.tab === 'history') {
-                    currentHistoryPage = 1;
-                    renderHistory();
-                }
-            });
-        });
-
-        // Transaction Dropdown Logic
-        document.querySelectorAll('.transaction-dropdown-header').forEach(header => {
-            header.addEventListener('click', () => {
-                const targetContent = document.getElementById(header.dataset.target);
-                const isActive = targetContent.classList.contains('active');
+                const progress = (spent / budget.limit) * 100;
+                const progressClass = progress > 100 ? 'over' : '';
                 
-                // Close all other dropdowns
-                document.querySelectorAll('.transaction-dropdown-content').forEach(content => content.classList.remove('active'));
-                document.querySelectorAll('.transaction-dropdown-header').forEach(hdr => hdr.classList.remove('active'));
-
-                // Toggle the clicked one
-                if (!isActive) {
-                    targetContent.classList.add('active');
-                    header.classList.add('active');
-                }
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `
+                    <div>
+                        <strong>${budget.category}</strong>: $${spent.toFixed(2)} / $${budget.limit.toFixed(2)}
+                    </div>
+                    <div class="budget-progress">
+                        <div class="budget-bar ${progressClass}" style="width: ${Math.min(100, progress)}%;"></div>
+                    </div>
+                    <button class="delete-btn" onclick="deleteBudget(${index})">X</button>
+                `;
+                list.appendChild(listItem);
             });
-        });
+        }
 
-        // Delete Logic - Now also handles balance reversal
-        document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('delete-button')) {
-                const idToDelete = e.target.dataset.id;
-                const type = e.target.dataset.type;
-                const category = e.target.dataset.category;
+        function deleteBudget(index) {
+            let budgets = JSON.parse(localStorage.getItem('budgets')) || [];
+            budgets.splice(index, 1);
+            localStorage.setItem('budgets', JSON.stringify(budgets));
+            renderBudgets();
+        }
 
-                let friendlyMessage = '';
-                let wasDeleted = false;
+        function addGoal() {
+            const goal = document.getElementById('goalItem').value.trim();
+            const target = parseFloat(document.getElementById('goalTarget').value);
+            const saved = parseFloat(document.getElementById('goalSaved').value);
 
-                if (type === 'bankAccount') {
-                    const index = financialData.bankAccounts.findIndex(acc => acc.id === idToDelete);
-                    if (index > -1) {
-                        financialData.bankAccounts.splice(index, 1);
-                        friendlyMessage = 'Bank Account deleted successfully.';
-                        wasDeleted = true;
-                    }
-                } else if (type === 'creditCard') {
-                    const index = financialData.creditCards.findIndex(card => card.id === idToDelete);
-                    if (index > -1) {
-                        financialData.creditCards.splice(index, 1);
-                        friendlyMessage = 'Credit Card deleted successfully.';
-                        wasDeleted = true;
-                    }
-                } else if (type === 'loan') {
-                    const index = financialData.loans.findIndex(loan => loan.id === idToDelete);
-                    if (index > -1) {
-                        financialData.loans.splice(index, 1);
-                        friendlyMessage = 'Loan deleted successfully.';
-                        wasDeleted = true;
-                    }
-                } else if (type === 'otherDebt') {
-                    const index = financialData.otherDebts.findIndex(debt => debt.id === idToDelete);
-                    if (index > -1) {
-                        financialData.otherDebts.splice(index, 1);
-                        friendlyMessage = 'Other Debt deleted successfully.';
-                        wasDeleted = true;
-                    }
-                } else if (type === 'historyTransaction') {
-                    if (category === 'cash') {
-                        const index = financialData.cashTransactions.findIndex(tx => tx.id === idToDelete);
-                        if (index > -1) {
-                            const transaction = financialData.cashTransactions[index];
-                            const account = financialData.bankAccounts.find(acc => acc.id === transaction.account_id);
-                            if (account) {
-                                // Reverse the transaction's effect
-                                if (transaction.type === 'income') {
-                                    account.balance -= transaction.amount;
-                                } else if (transaction.type === 'expense') {
-                                    account.balance += transaction.amount;
-                                }
-                            }
-                            financialData.cashTransactions.splice(index, 1);
-                            friendlyMessage = 'Cash Transaction deleted successfully.';
-                            wasDeleted = true;
-                        }
-                    } else if (category === 'credit') {
-                        const index = financialData.creditTransactions.findIndex(tx => tx.id === idToDelete);
-                        if (index > -1) {
-                            const transaction = financialData.creditTransactions[index];
-                            const card = financialData.creditCards.find(c => c.id === transaction.card_id);
-                            if (card) {
-                                // Reverse the transaction's effect
-                                if (transaction.type === 'charge') {
-                                    card.balance -= transaction.amount;
-                                } else if (transaction.type === 'pay') {
-                                    card.balance += transaction.amount;
-                                    const mainCheckingAccount = financialData.bankAccounts.find(acc => acc.id === financialData.mainCheckingAccountId);
-                                    if (mainCheckingAccount) {
-                                        mainCheckingAccount.balance += transaction.amount;
-                                    }
-                                }
-                            }
-                            financialData.creditTransactions.splice(index, 1);
-                            friendlyMessage = 'Credit Card Transaction deleted successfully.';
-                            wasDeleted = true;
-                        }
-                    } else if (category === 'loan') {
-                        const index = financialData.loanPayments.findIndex(tx => tx.id === idToDelete);
-                        if (index > -1) {
-                            const transaction = financialData.loanPayments[index];
-                            const loan = financialData.loans.find(l => l.id === transaction.loan_id) || financialData.otherDebts.find(od => od.id === transaction.loan_id);
-                            if (loan) {
-                                loan.current_amount += transaction.payment_amount;
-                            }
-                            const paymentSource = transaction.payment_method_type === 'Checking' ?
-                                financialData.bankAccounts.find(acc => acc.id === transaction.payment_method_id) :
-                                financialData.creditCards.find(c => c.id === transaction.payment_method_id);
-                            if (paymentSource) {
-                                if (transaction.payment_method_type === 'Checking') {
-                                    paymentSource.balance += transaction.payment_amount;
-                                } else if (transaction.payment_method_type === 'CreditCard') {
-                                    paymentSource.balance -= transaction.payment_amount;
-                                }
-                            }
-                            financialData.loanPayments.splice(index, 1);
-                            friendlyMessage = 'Loan Payment deleted successfully.';
-                            wasDeleted = true;
-                        }
-                    } else if (category === 'transfer') {
-                        const index = financialData.transfers.findIndex(tx => tx.id === idToDelete);
-                        if (index > -1) {
-                            const transaction = financialData.transfers[index];
-                            const fromAccount = financialData.bankAccounts.find(acc => acc.id === transaction.from_account_id);
-                            const toAccount = financialData.bankAccounts.find(acc => acc.id === transaction.to_account_id);
-                            if (fromAccount) { fromAccount.balance += transaction.amount; }
-                            if (toAccount) { toAccount.balance -= transaction.amount; }
-                            financialData.transfers.splice(index, 1);
-                            friendlyMessage = 'Transfer deleted successfully.';
-                            wasDeleted = true;
-                        }
-                    }
-                }
-
-                if (wasDeleted) {
-                    showMessage(friendlyMessage);
-                    refreshUI();
-                } else {
-                    showMessage("Item not found or could not be deleted.");
-                }
-            }
-        });
-
-        // Add Bank Account
-        document.getElementById('addBankAccountForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const name = document.getElementById('bankAccountName').value.trim();
-            const type = document.getElementById('bankAccountType').value;
-            const balance = parseFloat(document.getElementById('bankAccountBalance').value);
-
-            if (name && !isNaN(balance)) {
-                const newAccount = { id: generateUniqueId(), name, type, balance };
-                financialData.bankAccounts.push(newAccount);
-
-                if (type === 'Checking' && financialData.mainCheckingAccountId === null) {
-                    financialData.mainCheckingAccountId = newAccount.id;
-                }
-
-                showMessage("Bank Account added successfully.");
-                refreshUI();
-                e.target.reset();
-            } else {
-                showMessage("Please enter valid account name and a number for the balance.");
-            }
-        });
-
-        // Set Main Checking Account
-        document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('main-account-button')) {
-                const accountId = e.target.dataset.id;
-                financialData.mainCheckingAccountId = accountId;
-                showMessage("Main checking account set.");
-                refreshUI();
-            }
-        });
-
-        // Add Credit Card
-        document.getElementById('addCreditCardForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const name = document.getElementById('creditCardName').value.trim();
-            const limit = parseFloat(document.getElementById('creditCardLimit').value);
-            const balance = parseFloat(document.getElementById('creditCardBalance').value);
-
-            if (name && !isNaN(limit) && !isNaN(balance)) {
-                financialData.creditCards.push({ id: generateUniqueId(), name, credit_limit: limit, balance });
-                showMessage("Credit Card added successfully.");
-                refreshUI();
-                e.target.reset();
-            } else {
-                showMessage("Please enter valid card name and numbers for the limit and balance.");
-            }
-        });
-
-        // Add Loan
-        document.getElementById('addLoanForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const name = document.getElementById('loanName').value.trim();
-            const amount = parseFloat(document.getElementById('loanAmount').value);
-            const monthlyPayment = parseFloat(document.getElementById('loanMonthlyPayment').value);
-
-            if (name && !isNaN(amount) && amount > 0 && !isNaN(monthlyPayment)) {
-                financialData.loans.push({ id: generateUniqueId(), name, original_amount: amount, current_amount: amount, monthly_payment: monthlyPayment });
-                showMessage("Loan added successfully.");
-                refreshUI();
-                e.target.reset();
-            } else {
-                showMessage("Please enter valid loan name, amount, and monthly payment.");
-            }
-        });
-
-        // Add Other Debt
-        document.getElementById('addOtherDebtForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const name = document.getElementById('otherDebtName').value.trim();
-            const amount = parseFloat(document.getElementById('otherDebtAmount').value);
-
-            if (name && !isNaN(amount) && amount > 0) {
-                financialData.otherDebts.push({ id: generateUniqueId(), name, original_amount: amount, current_amount: amount });
-                showMessage("Other Debt added successfully.");
-                refreshUI();
-                e.target.reset();
-            } else {
-                showMessage("Please enter valid debt name and a positive amount.");
-            }
-        });
-
-        // Cash Transactions (Income/Expense)
-        document.getElementById('addCashTransactionForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const description = document.getElementById('cashTransactionDescription').value.trim();
-            const amount = parseFloat(document.getElementById('cashTransactionAmount').value);
-            const accountId = document.getElementById('cashTransactionAccount').value;
-            const type = e.submitter.dataset.type;
-
-            if (!accountId) {
-                showMessage("Please select an account for the cash transaction.");
+            if (goal === '' || isNaN(target) || isNaN(saved)) {
+                alert("Please enter valid goal details.");
                 return;
             }
 
-            if (description && !isNaN(amount) && amount > 0) {
-                const account = financialData.bankAccounts.find(acc => acc.id === accountId);
-                if (!account) {
-                    showMessage("Selected account not found.");
-                    return;
-                }
+            const goals = JSON.parse(localStorage.getItem('goals')) || [];
+            const newGoal = { goal, target, saved };
+            goals.push(newGoal);
+            localStorage.setItem('goals', JSON.stringify(goals));
 
-                if (type === 'income') {
-                    account.balance += amount;
-                } else if (type === 'expense') {
-                    account.balance -= amount;
-                }
+            document.getElementById('goalItem').value = '';
+            document.getElementById('goalTarget').value = '';
+            document.getElementById('goalSaved').value = '';
+            renderGoals();
+        }
 
-                financialData.cashTransactions.push({ id: generateUniqueId(), account_id: accountId, description, amount, type, transaction_date: new Date() });
+        function renderGoals() {
+            const list = document.getElementById('goalsList');
+            list.innerHTML = '';
+            const goals = JSON.parse(localStorage.getItem('goals')) || [];
 
-                showMessage(`Cash ${type} added successfully.`);
-                refreshUI();
-                e.target.reset();
-            } else {
-                showMessage("Please enter a valid description and a positive amount for the transaction.");
+            goals.forEach((goal, index) => {
+                const progress = (goal.saved / goal.target) * 100;
+                const progressClass = progress >= 100 ? 'complete' : '';
+                
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `
+                    <div>
+                        <strong>${goal.goal}</strong>: $${goal.saved.toFixed(2)} / $${goal.target.toFixed(2)}
+                    </div>
+                    <div class="goal-progress">
+                        <div class="goal-bar ${progressClass}" style="width: ${Math.min(100, progress)}%;"></div>
+                    </div>
+                    <button class="delete-btn" onclick="deleteGoal(${index})">X</button>
+                `;
+                list.appendChild(listItem);
+            });
+        }
+        
+        function deleteGoal(index) {
+            let goals = JSON.parse(localStorage.getItem('goals')) || [];
+            goals.splice(index, 1);
+            localStorage.setItem('goals', JSON.stringify(goals));
+            renderGoals();
+        }
+
+        function clearAllData() {
+            if (confirm("Are you sure you want to clear all data? This cannot be undone.")) {
+                localStorage.clear();
+                window.location.reload();
             }
-        });
-
-        // Credit Card Transactions (Pay/Charge)
-        document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('pay-button') || e.target.classList.contains('charge-button')) {
-                const cardId = e.target.dataset.cardId;
-                const action = e.target.dataset.action;
-                const amountInput = document.getElementById(`creditAmount_${cardId}`);
-                const amount = parseFloat(amountInput.value);
-                const card = financialData.creditCards.find(c => c.id === cardId);
-                const mainCheckingAccount = financialData.bankAccounts.find(acc => acc.id === financialData.mainCheckingAccountId);
-
-                if (!card) {
-                    showMessage("Credit card not found.");
-                    return;
-                }
-                if (isNaN(amount) || amount <= 0) {
-                    showMessage("Please enter a valid positive amount for the credit card transaction.");
-                    return;
-                }
-
-                if (action === 'pay') {
-                    if (!mainCheckingAccount) {
-                        showMessage("Please set a main checking account to make a payment.");
-                        return;
-                    }
-                    if (mainCheckingAccount.balance < amount) {
-                        showMessage("Insufficient funds in main checking account to make this payment.");
-                        return;
-                    }
-                    card.balance -= amount;
-                    mainCheckingAccount.balance -= amount;
-                    financialData.creditTransactions.push({ id: generateUniqueId(), card_id: cardId, amount, type: 'pay', transaction_date: new Date() });
-                    showMessage("Credit Card payment processed successfully.");
-                } else if (action === 'charge') {
-                    card.balance += amount;
-                    financialData.creditTransactions.push({ id: generateUniqueId(), card_id: cardId, amount, type: 'charge', transaction_date: new Date() });
-                    showMessage("Credit Card charge processed successfully.");
-                }
-                refreshUI();
-                amountInput.value = '';
-            }
-        });
-
-        // Transfer Money Submission
-        document.getElementById('addTransferForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const fromAccountId = document.getElementById('transferFromAccount').value;
-            const toAccountId = document.getElementById('transferToAccount').value;
-            const transferAmount = parseFloat(document.getElementById('transferAmount').value);
-
-            if (!fromAccountId || !toAccountId || isNaN(transferAmount) || transferAmount <= 0) {
-                showMessage("Please select both accounts and enter a valid positive amount for the transfer.");
-                return;
-            }
-            if (fromAccountId === toAccountId) {
-                showMessage("Cannot transfer money to the same account.");
-                return;
-            }
-
-            const fromAccount = financialData.bankAccounts.find(acc => acc.id === fromAccountId);
-            const toAccount = financialData.bankAccounts.find(acc => acc.id === toAccountId);
-
-            if (!fromAccount || !toAccount) {
-                showMessage("Selected account not found.");
-                return;
-            }
-            if (fromAccount.balance < transferAmount) {
-                showMessage("Insufficient funds in the source account for this transfer.");
-                return;
-            }
-
-            fromAccount.balance -= transferAmount;
-            toAccount.balance += transferAmount;
-            financialData.transfers.push({ id: generateUniqueId(), from_account_id: fromAccountId, to_account_id: toAccountId, amount: transferAmount, transaction_date: new Date() });
-
-            showMessage("Money transferred successfully.");
-            refreshUI();
-            e.target.reset();
-        });
-
-        // Loan Payment Submission
-        document.getElementById('addLoanPaymentForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const loanId = document.getElementById('loanToPay').value;
-            const paymentSourceType = document.getElementById('paymentSourceType').value;
-            const paymentSourceId = document.getElementById('paymentSourceId').value;
-            const paymentAmount = parseFloat(document.getElementById('loanPaymentAmount').value);
-
-            if (!loanId || !paymentSourceType || !paymentSourceId || isNaN(paymentAmount) || paymentAmount <= 0) {
-                showMessage("Please fill all loan payment fields with valid positive amounts.");
-                return;
-            }
-
-            const loan = financialData.loans.find(l => l.id === loanId) || financialData.otherDebts.find(od => od.id === loanId);
-            if (!loan) {
-                showMessage("Selected loan not found.");
-                return;
-            }
-
-            let paymentSource = null;
-            if (paymentSourceType === 'Checking') {
-                paymentSource = financialData.bankAccounts.find(acc => acc.id === paymentSourceId);
-                if (!paymentSource) { showMessage("Payment source account not found."); return; }
-                if (paymentSource.balance < paymentAmount) { showMessage("Insufficient funds in checking account."); return; }
-                paymentSource.balance -= paymentAmount;
-            } else if (paymentSourceType === 'CreditCard') {
-                paymentSource = financialData.creditCards.find(c => c.id === paymentSourceId);
-                if (!paymentSource) { showMessage("Payment source credit card not found."); return; }
-                paymentSource.balance += paymentAmount; // Payment to a loan from a credit card increases credit card debt
-            } else {
-                showMessage("Invalid payment source type.");
-                return;
-            }
-
-            loan.current_amount -= paymentAmount;
-            if (loan.current_amount < 0) { loan.current_amount = 0; }
-
-            financialData.loanPayments.push({ id: generateUniqueId(), loan_id: loanId, payment_amount: paymentAmount, payment_method_type: paymentSourceType, payment_method_id: paymentSourceId, transaction_date: new Date() });
-
-            showMessage("Loan payment processed successfully.");
-            refreshUI();
-            e.target.reset();
-        });
+        }
     </script>
+
 </body>
 </html>
