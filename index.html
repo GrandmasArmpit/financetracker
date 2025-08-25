@@ -4,138 +4,315 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Financial Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #007bff;
+            --primary-dark: #0056b3;
+            --secondary-color: #6c757d;
+            --income-color: #28a745;
+            --expense-color: #dc3545;
+            --bg-light: #f4f7f9;
+            --card-bg: #ffffff;
+            --border-color: #e0e6ed;
+            --text-color: #343a40;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Inter', sans-serif;
             margin: 0;
-            background-color: #f0f2f5;
+            background-color: var(--bg-light);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            padding: 1rem;
+            color: var(--text-color);
         }
 
         .container {
-            background-color: white;
+            background-color: var(--card-bg);
             padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 90%;
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            width: 100%;
             max-width: 600px;
+            min-height: 90vh; /* Adjusted to be taller and more flexible */
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
         }
 
         h1 {
             text-align: center;
-            color: #333;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        h2 {
+            margin-top: 1.5rem;
+            border-left: 4px solid var(--primary-color);
+            padding-left: 10px;
+            font-weight: 500;
         }
 
         .tabs {
             display: flex;
             justify-content: space-around;
-            border-bottom: 2px solid #ddd;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             overflow-x: auto;
             white-space: nowrap;
             -webkit-overflow-scrolling: touch;
+            border-radius: 10px;
+            background-color: var(--bg-light);
+            box-shadow: inset var(--shadow-sm);
         }
 
         .tab-button {
             background: none;
             border: none;
-            padding: 1rem;
+            padding: 1rem 0.5rem;
             cursor: pointer;
-            font-size: 1rem;
-            color: #555;
+            font-size: 0.9rem;
+            color: var(--secondary-color);
             flex-grow: 1;
             text-align: center;
-            transition: color 0.3s ease, border-bottom 0.3s ease;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
         }
 
         .tab-button:hover {
-            color: #007bff;
+            color: var(--primary-color);
         }
 
         .tab-button.active {
-            color: #007bff;
-            border-bottom: 3px solid #007bff;
+            color: var(--primary-color);
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: var(--shadow-sm);
+            transform: translateY(-2px);
+            font-weight: 600;
         }
 
         .tab-content {
             display: none;
+            animation: fadeIn 0.5s ease-in-out;
+            flex-grow: 1;
+            overflow-y: hidden;
         }
 
         .tab-content.active {
             display: block;
         }
 
+        /* Specific style for history to enable full-screen scrolling */
+        #history.tab-content.active {
+            display: flex;
+            flex-direction: column;
+        }
+
         .form-group {
-            margin-bottom: 1rem;
+            margin-bottom: 1.25rem;
         }
 
         label {
             display: block;
             margin-bottom: 0.5rem;
-            color: #555;
-            font-weight: bold;
+            color: var(--text-color);
+            font-weight: 500;
         }
 
-        input[type="number"], input[type="text"], button {
+        input[type="number"], input[type="text"], select {
             width: 100%;
-            padding: 0.75rem;
+            padding: 0.85rem;
             box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
             font-size: 1rem;
+            background-color: #fcfcfc;
+            transition: all 0.3s ease;
+        }
+        
+        input[type="number"]:focus, input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
         }
 
         button {
-            background-color: #007bff;
-            color: white;
+            width: 100%;
+            padding: 0.85rem;
             border: none;
+            border-radius: 12px;
             cursor: pointer;
             margin-top: 0.5rem;
-            transition: background-color 0.3s ease;
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            background-image: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
         }
 
         button:hover {
-            background-color: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 123, 255, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
+        }
+        
+        .transaction-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .transaction-buttons button {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .transaction-buttons .income-btn {
+            background-image: linear-gradient(135deg, var(--income-color), #1e7e34);
+            box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2);
+        }
+
+        .transaction-buttons .income-btn:hover {
+            box-shadow: 0 6px 12px rgba(40, 167, 69, 0.3);
+        }
+
+        .transaction-buttons .expense-btn {
+            background-image: linear-gradient(135deg, var(--expense-color), #b21f2d);
+            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.2);
+        }
+
+        .transaction-buttons .expense-btn:hover {
+            box-shadow: 0 6px 12px rgba(220, 53, 69, 0.3);
+        }
+        
+        .credit-card-buttons .charge-btn {
+            background-image: linear-gradient(135deg, var(--expense-color), #b21f2d);
+            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.2);
+        }
+        
+        .credit-card-buttons .charge-btn:hover {
+            box-shadow: 0 6px 12px rgba(220, 53, 69, 0.3);
+        }
+
+        .credit-card-buttons .pay-btn {
+            background-image: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+        }
+        
+        .credit-card-buttons .pay-btn:hover {
+            box-shadow: 0 6px 12px rgba(0, 123, 255, 0.3);
+        }
+
+        .account-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .account-list li {
+            background-color: var(--bg-light);
+            padding: 1.25rem;
+            border-radius: 15px;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s ease;
+        }
+        
+        .account-list li:hover {
+            transform: translateY(-2px);
+        }
+
+        .account-list li strong {
+            display: block;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .account-list li button {
+            margin-top: 0;
+            width: auto;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .account-list li .delete-btn {
+            background-image: linear-gradient(135deg, #dc3545, #b21f2d);
+            box-shadow: none;
+            margin-left: 10px;
+        }
+
+        .summary-figures {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
         }
 
         .summary-box {
-            background-color: #e9ecef;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-top: 1rem;
+            background-color: var(--bg-light);
+            padding: 1.5rem;
+            border-radius: 15px;
             text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .summary-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
         }
 
         .summary-box h3 {
             margin-top: 0;
-            color: #333;
+            color: var(--secondary-color);
+            font-size: 1rem;
+            font-weight: 500;
         }
 
         .summary-value {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #007bff;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
         }
 
-        #historyList, #budgetList, #goalsList {
+        #historyList {
             list-style-type: none;
             padding: 0;
-            max-height: 200px;
-            overflow-y: auto;
+            flex-grow: 1; /* Allows the list to fill remaining vertical space */
+            overflow-y: auto; /* Adds scrolling only for the list content */
+            margin-top: 1rem;
         }
 
-        #historyList li, #budgetList li, #goalsList li {
-            background-color: #f8f9fa;
-            border: 1px solid #eee;
+        #historyList li {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
             padding: 0.75rem;
-            margin-bottom: 0.5rem;
-            border-radius: 5px;
+            margin-bottom: 0.75rem;
+            border-radius: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            box-shadow: var(--shadow-sm);
+            animation: slideIn 0.5s ease-out;
         }
 
         #historyList li .history-item {
@@ -146,141 +323,285 @@
 
         #historyList li .history-date {
             font-size: 0.8rem;
-            color: #777;
+            color: var(--secondary-color);
         }
 
         .delete-btn {
-            background-color: #dc3545;
+            background-image: linear-gradient(135deg, #dc3545, #b21f2d);
             color: white;
             border: none;
-            padding: 0.25rem 0.5rem;
-            border-radius: 3px;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
             cursor: pointer;
+            box-shadow: none;
+            font-weight: 500;
+            transition: transform 0.2s ease;
+        }
+        
+        .delete-btn:hover {
+            transform: translateY(-1px);
         }
 
         .expense {
-            color: #dc3545;
+            color: var(--expense-color);
+            font-weight: 600;
         }
 
         .income {
-            color: #28a745;
+            color: var(--income-color);
+            font-weight: 600;
+        }
+        
+        .safe-to-spend .summary-value {
+            color: var(--income-color);
+        }
+        
+        .total-debt .summary-value {
+            color: var(--expense-color);
+        }
+        
+        .overall-cash .summary-value {
+            color: #17a2b8;
         }
 
-        .budget-progress {
-            background-color: #e9ecef;
+        #cashFlowChart {
+            width: 100%;
+            height: 200px;
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            background-color: var(--card-bg);
+            margin-top: 1rem;
+        }
+        
+        .main-account-tag {
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .utilization-bar {
+            background-color: var(--border-color);
             border-radius: 5px;
+            height: 10px;
+            width: 100%;
             margin-top: 0.5rem;
         }
 
-        .budget-bar {
-            height: 10px;
-            background-color: #28a745;
+        .utilization-bar-fill {
+            height: 100%;
             border-radius: 5px;
             transition: width 0.3s ease;
         }
-
-        .budget-bar.over {
-            background-color: #dc3545;
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
-        .goal-progress {
-            margin-top: 0.5rem;
+        @media (max-width: 400px) {
+            .summary-figures {
+                grid-template-columns: 1fr;
+            }
+            .tabs {
+                justify-content: flex-start;
+            }
         }
-
-        .goal-bar {
-            height: 10px;
-            background-color: #007bff;
-            border-radius: 5px;
-            transition: width 0.3s ease;
-        }
-
-        .goal-bar.complete {
-            background-color: #28a745;
-        }
-
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Cogito's Financial Tracker 💰</h1>
+        <h1>Financial Tracker</h1>
 
         <div class="tabs">
             <button class="tab-button active" data-tab="dashboard">Dashboard</button>
             <button class="tab-button" data-tab="history">History</button>
-            <button class="tab-button" data-tab="budget">Budget</button>
-            <button class="tab-button" data-tab="goals">Savings Goals</button>
+            <button class="tab-button" data-tab="checking_savings">C&S</button>
+            <button class="tab-button" data-tab="credit_cards">Cards</button>
+            <button class="tab-button" data-tab="loans">Loans</button>
             <button class="tab-button" data-tab="settings">Settings</button>
         </div>
 
         <div id="dashboard" class="tab-content active">
-            <h2>Current Balances</h2>
-            <div class="form-group">
-                <label for="creditCardDebt">Credit Card Debt ($)</label>
-                <input type="number" id="creditCardDebt" placeholder="Enter debt amount" step="0.01">
+            <div class="summary-figures">
+                <div class="summary-box safe-to-spend">
+                    <h3>Safe to Spend</h3>
+                    <div id="safeToSpendValue" class="summary-value"></div>
+                </div>
+                <div class="summary-box main-checking">
+                    <h3>Main Checking</h3>
+                    <div id="mainCheckingValue" class="summary-value"></div>
+                </div>
+                <div class="summary-box total-debt">
+                    <h3>Total CC Debt</h3>
+                    <div id="totalCCDebtValue" class="summary-value"></div>
+                </div>
+                <div class="summary-box overall-cash">
+                    <h3>Overall Cash</h3>
+                    <div id="overallCashValue" class="summary-value"></div>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="totalCash">Total Cash ($)</label>
-                <input type="number" id="totalCash" placeholder="Enter cash amount" step="0.01">
-            </div>
-            <button onclick="updateBalances()">Update Balances</button>
+            
+            <hr style="margin-top: 2rem; margin-bottom: 2rem; border: 0; height: 1px; background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0));">
 
-            <div class="summary-box">
-                <h3>Cash Available</h3>
-                <span id="cashAvailable" class="summary-value">$0.00</span>
+            <h2>Checking & Savings Transactions</h2>
+            <div class="form-group">
+                <label for="cs_transactionAccount">Account</label>
+                <select id="cs_transactionAccount"></select>
             </div>
+            <div class="form-group">
+                <label for="cs_transactionAmount">Amount ($)</label>
+                <input type="number" id="cs_transactionAmount" placeholder="e.g., 25.50" step="0.01">
+            </div>
+            <div class="form-group">
+                <label for="cs_transactionDescription">Description</label>
+                <input type="text" id="cs_transactionDescription" placeholder="e.g., Groceries, Paycheck">
+            </div>
+            <div class="transaction-buttons">
+                <button class="income-btn" onclick="addCheckingTransaction('income')">Add Income</button>
+                <button class="expense-btn" onclick="addCheckingTransaction('expense')">Add Expense</button>
+            </div>
+
+            <hr style="margin-top: 2rem; margin-bottom: 2rem; border: 0; height: 1px; background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0));">
+
+            <h2>Credit Card Transactions</h2>
+            <div class="form-group">
+                <label for="cc_transactionAccount">Card</label>
+                <select id="cc_transactionAccount"></select>
+            </div>
+            <div class="form-group">
+                <label for="cc_transactionAmount">Amount ($)</label>
+                <input type="number" id="cc_transactionAmount" placeholder="e.g., 50.00" step="0.01">
+            </div>
+            <div class="form-group">
+                <label for="cc_transactionDescription">Description</label>
+                <input type="text" id="cc_transactionDescription" placeholder="e.g., Online Shopping">
+            </div>
+            <div class="transaction-buttons credit-card-buttons">
+                <button class="charge-btn" onclick="addCreditCardTransaction('charge')">Charge Card</button>
+                <button class="pay-btn" onclick="addCreditCardTransaction('pay')">Pay Card</button>
+            </div>
+            
+            <hr style="margin-top: 2rem; margin-bottom: 2rem; border: 0; height: 1px; background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0));">
+
+            <h2>Account Transfers</h2>
+            <div class="form-group">
+                <label for="transferFromAccount">From</label>
+                <select id="transferFromAccount"></select>
+            </div>
+            <div class="form-group">
+                <label for="transferToAccount">To</label>
+                <select id="transferToAccount"></select>
+            </div>
+            <div class="form-group">
+                <label for="transferAmount">Amount ($)</label>
+                <input type="number" id="transferAmount" placeholder="e.g., 100.00" step="0.01">
+            </div>
+            <button onclick="transferMoney()">Transfer</button>
+            
+            <hr style="margin-top: 2rem; margin-bottom: 2rem; border: 0; height: 1px; background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0));">
+            <canvas id="cashFlowChart"></canvas>
         </div>
 
         <div id="history" class="tab-content">
             <h2>Transaction History</h2>
-            <div class="form-group">
-                <label for="transactionAmount">Amount ($)</label>
-                <input type="number" id="transactionAmount" placeholder="e.g., -25.50 for expense" step="0.01">
-            </div>
-            <div class="form-group">
-                <label for="transactionDescription">Description</label>
-                <input type="text" id="transactionDescription" placeholder="e.g., Groceries, Paycheck">
-            </div>
-            <button onclick="addTransaction()">Add Transaction</button>
             <ul id="historyList"></ul>
         </div>
-
-        <div id="budget" class="tab-content">
-            <h2>Monthly Budget</h2>
+        
+        <div id="checking_savings" class="tab-content">
+            <h2>Add Checking / Savings Account</h2>
             <div class="form-group">
-                <label for="budgetItem">Category</label>
-                <input type="text" id="budgetItem" placeholder="e.g., Food, Entertainment">
+                <label for="cs_accountType">Account Type</label>
+                <select id="cs_accountType">
+                    <option value="checking">Checking</option>
+                    <option value="savings">Savings</option>
+                </select>
             </div>
             <div class="form-group">
-                <label for="budgetLimit">Monthly Limit ($)</label>
-                <input type="number" id="budgetLimit" placeholder="e.g., 500" step="0.01">
+                <label for="cs_accountName">Account Name</label>
+                <input type="text" id="cs_accountName" placeholder="e.g., Chase Checking">
             </div>
-            <button onclick="addBudget()">Add Budget</button>
-            <ul id="budgetList"></ul>
+            <div class="form-group">
+                <label for="cs_accountBalance">Starting Balance ($)</label>
+                <input type="number" id="cs_accountBalance" placeholder="e.g., 1000" step="0.01">
+            </div>
+            <button onclick="addCheckingSavingsAccount()">Add Account</button>
+            
+            <hr style="margin-top: 2rem; margin-bottom: 2rem; border: 0; height: 1px; background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0));">
+            <h2>Your Accounts</h2>
+            <ul id="checking_savings_list" class="account-list"></ul>
+        </div>
+        
+        <div id="credit_cards" class="tab-content">
+            <h2>Add Credit Card</h2>
+            <div class="form-group">
+                <label for="cc_accountName">Card Name</label>
+                <input type="text" id="cc_accountName" placeholder="e.g., Visa">
+            </div>
+            <div class="form-group">
+                <label for="cc_creditLimit">Credit Limit ($)</label>
+                <input type="number" id="cc_creditLimit" placeholder="e.g., 5000" step="0.01">
+            </div>
+            <div class="form-group">
+                <label for="cc_accountBalance">Current Balance ($)</label>
+                <input type="number" id="cc_accountBalance" placeholder="e.g., 500" step="0.01">
+            </div>
+            <button onclick="addCreditCardAccount()">Add Card</button>
+            
+            <hr style="margin-top: 2rem; margin-bottom: 2rem; border: 0; height: 1px; background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0));">
+            <h2>Your Credit Cards</h2>
+            <ul id="credit_cards_list" class="account-list"></ul>
         </div>
 
-        <div id="goals" class="tab-content">
-            <h2>Savings Goals</h2>
+        <div id="loans" class="tab-content">
+            <h2>Add Loan</h2>
             <div class="form-group">
-                <label for="goalItem">Goal</label>
-                <input type="text" id="goalItem" placeholder="e.g., New Laptop, Vacation Fund">
+                <label for="loanName">Loan Name</label>
+                <input type="text" id="loanName" placeholder="e.g., Car Loan">
             </div>
             <div class="form-group">
-                <label for="goalTarget">Target Amount ($)</label>
-                <input type="number" id="goalTarget" placeholder="e.g., 1200" step="0.01">
+                <label for="loanTotalAmount">Total Amount ($)</label>
+                <input type="number" id="loanTotalAmount" placeholder="e.g., 20000" step="0.01">
             </div>
             <div class="form-group">
-                <label for="goalSaved">Amount Saved ($)</label>
-                <input type="number" id="goalSaved" placeholder="e.g., 200" step="0.01">
+                <label for="loanPaidAmount">Amount Paid ($)</label>
+                <input type="number" id="loanPaidAmount" placeholder="e.g., 500" step="0.01">
             </div>
-            <button onclick="addGoal()">Add Savings Goal</button>
-            <ul id="goalsList"></ul>
+            <button onclick="addLoan()">Add Loan</button>
+            
+            <hr style="margin-top: 2rem; margin-bottom: 2rem; border: 0; height: 1px; background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0));">
+            <h2>Pay Loan</h2>
+            <div class="form-group">
+                <label for="loanToPay">Select Loan</label>
+                <select id="loanToPay"></select>
+            </div>
+            <div class="form-group">
+                <label for="paymentSource">Payment Source</label>
+                <select id="paymentSource"></select>
+            </div>
+            <div class="form-group">
+                <label for="loanPaymentAmount">Payment Amount ($)</label>
+                <input type="number" id="loanPaymentAmount" placeholder="e.g., 100" step="0.01">
+            </div>
+            <button onclick="payLoan()">Make Payment</button>
+            
+            <hr style="margin-top: 2rem; margin-bottom: 2rem; border: 0; height: 1px; background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0));">
+            <h2>Your Loans</h2>
+            <ul id="loansList" class="account-list"></ul>
         </div>
 
         <div id="settings" class="tab-content">
             <h2>Settings & Data Management</h2>
-            <button onclick="clearAllData()">Clear All Data</button>
-            <p style="font-size:0.9rem; color:#888; margin-top: 1rem;">
+            <button class="delete-btn" onclick="clearAllData()">Clear All Data</button>
+            <p style="font-size:0.9rem; color:var(--secondary-color); margin-top: 1rem;">
                 This will permanently delete all your financial data from this device.
             </p>
         </div>
@@ -300,91 +621,537 @@
                     const targetTab = tab.getAttribute('data-tab');
                     document.getElementById(targetTab).classList.add('active');
                     
-                    // Re-render certain tabs on switch
+                    if (targetTab === 'dashboard') renderDashboard();
                     if (targetTab === 'history') renderHistory();
-                    if (targetTab === 'budget') renderBudgets();
-                    if (targetTab === 'goals') renderGoals();
+                    if (targetTab === 'checking_savings') renderCheckingSavingsAccounts();
+                    if (targetTab === 'credit_cards') renderCreditCardAccounts();
+                    if (targetTab === 'loans') renderLoans();
                 });
             });
 
-            // Initial render
             loadData();
         });
 
         function loadData() {
-            const debt = localStorage.getItem('creditCardDebt') || 0;
-            const cash = localStorage.getItem('totalCash') || 0;
-            const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
-            const budgets = JSON.parse(localStorage.getItem('budgets')) || [];
-            const goals = JSON.parse(localStorage.getItem('goals')) || [];
-
-            document.getElementById('creditCardDebt').value = parseFloat(debt).toFixed(2);
-            document.getElementById('totalCash').value = parseFloat(cash).toFixed(2);
-            updateCashAvailable();
+            renderDashboard();
             renderHistory();
-            renderBudgets();
-            renderGoals();
+            renderCheckingSavingsAccounts();
+            renderCreditCardAccounts();
+            renderLoans();
         }
 
-        function saveData() {
-            const debt = parseFloat(document.getElementById('creditCardDebt').value) || 0;
-            const cash = parseFloat(document.getElementById('totalCash').value) || 0;
-
-            localStorage.setItem('creditCardDebt', debt);
-            localStorage.setItem('totalCash', cash);
-            updateCashAvailable();
+        function getAccounts() {
+            return JSON.parse(localStorage.getItem('accounts')) || [];
         }
 
-        function updateBalances() {
-            saveData();
-            alert("Balances updated successfully!");
+        function saveAccounts(accounts) {
+            localStorage.setItem('accounts', JSON.stringify(accounts));
+            renderDashboard();
+            renderCheckingSavingsAccounts();
+            renderCreditCardAccounts();
+            updateSelects();
+        }
+        
+        function getLoans() {
+            return JSON.parse(localStorage.getItem('loans')) || [];
         }
 
-        function updateCashAvailable() {
-            const debt = parseFloat(localStorage.getItem('creditCardDebt')) || 0;
-            const cash = parseFloat(localStorage.getItem('totalCash')) || 0;
-            const available = cash - debt;
-            document.getElementById('cashAvailable').textContent = `$${available.toFixed(2)}`;
-            document.getElementById('cashAvailable').style.color = available >= 0 ? '#28a745' : '#dc3545';
+        function saveLoans(loans) {
+            localStorage.setItem('loans', JSON.stringify(loans));
+            renderLoans();
         }
 
-        function addTransaction() {
-            const amount = parseFloat(document.getElementById('transactionAmount').value);
-            const description = document.getElementById('transactionDescription').value.trim();
+        function getTransactions() {
+            return JSON.parse(localStorage.getItem('transactions')) || [];
+        }
 
-            if (isNaN(amount) || description === '') {
-                alert("Please enter a valid amount and description.");
+        function saveTransactions(transactions) {
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+            renderHistory();
+            renderDashboard();
+        }
+        
+        function findMainCheckingAccount(accounts) {
+            return accounts.find(acc => acc.isMain && acc.type === 'checking');
+        }
+
+        function updateSelects() {
+            const accounts = getAccounts();
+            const checkingSavingsAccounts = accounts.filter(acc => acc.type === 'checking' || acc.type === 'savings');
+            const creditCardAccounts = accounts.filter(acc => acc.type === 'credit');
+            const mainCheckingAccount = findMainCheckingAccount(accounts);
+
+            const csAccountSelect = document.getElementById('cs_transactionAccount');
+            const ccAccountSelect = document.getElementById('cc_transactionAccount');
+            const transferFromSelect = document.getElementById('transferFromAccount');
+            const transferToSelect = document.getElementById('transferToAccount');
+            const loanToPaySelect = document.getElementById('loanToPay');
+            const paymentSourceSelect = document.getElementById('paymentSource');
+
+            csAccountSelect.innerHTML = '';
+            ccAccountSelect.innerHTML = '';
+            transferFromSelect.innerHTML = '';
+            transferToSelect.innerHTML = '';
+            loanToPaySelect.innerHTML = '';
+            paymentSourceSelect.innerHTML = '';
+
+            checkingSavingsAccounts.forEach((acc, index) => {
+                const globalIndex = accounts.findIndex(a => a.name === acc.name && a.type === acc.type);
+                const accountTypeLabel = acc.type.charAt(0).toUpperCase() + acc.type.slice(1);
+                const option = document.createElement('option');
+                option.value = globalIndex;
+                option.textContent = `${acc.name} (${accountTypeLabel}) ($${acc.balance.toFixed(2)})`;
+                csAccountSelect.appendChild(option);
+
+                if (mainCheckingAccount && acc.name === mainCheckingAccount.name && acc.type === mainCheckingAccount.type) {
+                    option.selected = true;
+                }
+            });
+
+            creditCardAccounts.forEach((acc, index) => {
+                const globalIndex = accounts.findIndex(a => a.name === acc.name && a.type === acc.type);
+                const option = document.createElement('option');
+                option.value = globalIndex;
+                option.textContent = `${acc.name} ($${acc.balance.toFixed(2)})`;
+                ccAccountSelect.appendChild(option);
+            });
+            
+            checkingSavingsAccounts.forEach((acc, index) => {
+                const globalIndex = accounts.findIndex(a => a.name === acc.name && a.type === acc.type);
+                const accountTypeLabel = acc.type.charAt(0).toUpperCase() + acc.type.slice(1);
+                const fromOption = document.createElement('option');
+                fromOption.value = globalIndex;
+                fromOption.textContent = `${acc.name} (${accountTypeLabel}) ($${acc.balance.toFixed(2)})`;
+                transferFromSelect.appendChild(fromOption);
+                
+                const toOption = document.createElement('option');
+                toOption.value = globalIndex;
+                toOption.textContent = `${acc.name} (${accountTypeLabel}) ($${acc.balance.toFixed(2)})`;
+                transferToSelect.appendChild(toOption);
+
+                if (mainCheckingAccount && acc.name === mainCheckingAccount.name && acc.type === mainCheckingAccount.type) {
+                    fromOption.selected = true;
+                }
+            });
+
+            const loans = getLoans();
+            loans.forEach((loan, index) => {
+                const loanOption = document.createElement('option');
+                loanOption.value = index;
+                loanOption.textContent = loan.name;
+                loanToPaySelect.appendChild(loanOption);
+            });
+            
+            accounts.forEach((acc, index) => {
+                if (acc.type === 'checking' || acc.type === 'credit') {
+                    const paymentSourceOption = document.createElement('option');
+                    paymentSourceOption.value = index;
+                    const accountTypeLabel = acc.type.charAt(0).toUpperCase() + acc.type.slice(1);
+                    paymentSourceOption.textContent = `${acc.name} (${accountTypeLabel}) ($${acc.balance.toFixed(2)})`;
+                    paymentSourceSelect.appendChild(paymentSourceOption);
+
+                    if (mainCheckingAccount && acc.name === mainCheckingAccount.name && acc.type === mainCheckingAccount.type) {
+                        paymentSourceOption.selected = true;
+                    }
+                }
+            });
+        }
+
+        function renderDashboard() {
+            updateSelects();
+            drawDashboardFigures();
+            drawCashFlowChart();
+        }
+
+        function drawDashboardFigures() {
+            const accounts = getAccounts();
+            const mainChecking = findMainCheckingAccount(accounts);
+            const totalCCDebt = accounts
+                .filter(acc => acc.type === 'credit')
+                .reduce((sum, acc) => sum + acc.balance, 0);
+            
+            const overallCash = accounts
+                .filter(acc => acc.type !== 'credit')
+                .reduce((sum, acc) => sum + acc.balance, 0);
+
+            const safeToSpend = (mainChecking ? mainChecking.balance : 0) - totalCCDebt;
+
+            document.getElementById('safeToSpendValue').textContent = `$${safeToSpend.toFixed(2)}`;
+            document.getElementById('mainCheckingValue').textContent = mainChecking ? `$${mainChecking.balance.toFixed(2)}` : '$0.00';
+            document.getElementById('totalCCDebtValue').textContent = `$${totalCCDebt.toFixed(2)}`;
+            document.getElementById('overallCashValue').textContent = `$${overallCash.toFixed(2)}`;
+        }
+
+        function renderCheckingSavingsAccounts() {
+            const accounts = getAccounts().filter(acc => acc.type !== 'credit');
+            const list = document.getElementById('checking_savings_list');
+            list.innerHTML = '';
+            
+            accounts.forEach((acc, index) => {
+                const listItem = document.createElement('li');
+                let balanceClass = acc.balance >= 0 ? 'income' : 'expense';
+                let balanceText = `$${acc.balance.toFixed(2)}`;
+                let actionButtons = `<button class="delete-btn" onclick="deleteAccount(${getAccounts().findIndex(a => a.name === acc.name)})">X</button>`;
+                
+                if (acc.type === 'checking') {
+                    if (!acc.isMain) {
+                        actionButtons = `<button onclick="setMainChecking(${getAccounts().findIndex(a => a.name === acc.name)})">Set as Main</button>${actionButtons}`;
+                    } else {
+                        actionButtons = `<span class="main-account-tag">Main</span> ${actionButtons}`;
+                    }
+                }
+
+                listItem.innerHTML = `
+                    <div>
+                        <strong>${acc.name} (${acc.type.charAt(0).toUpperCase() + acc.type.slice(1)})</strong><br>
+                        <span class="${balanceClass}">${balanceText}</span>
+                    </div>
+                    <div>${actionButtons}</div>
+                `;
+                list.appendChild(listItem);
+            });
+        }
+        
+        function renderCreditCardAccounts() {
+            const accounts = getAccounts().filter(acc => acc.type === 'credit');
+            const list = document.getElementById('credit_cards_list');
+            list.innerHTML = '';
+            
+            accounts.forEach((acc, index) => {
+                const listItem = document.createElement('li');
+                const utilization = acc.limit > 0 ? (acc.balance / acc.limit) * 100 : 0;
+                const utilizationColor = utilization > 30 ? (utilization > 50 ? '#dc3545' : '#ffc107') : '#28a745';
+                const balanceClass = acc.balance > 0 ? 'expense' : 'income';
+
+                listItem.innerHTML = `
+                    <div>
+                        <strong>${acc.name}</strong><br>
+                        <span class="${balanceClass}">Balance: $${acc.balance.toFixed(2)}</span>
+                        <span> / Limit: $${acc.limit.toFixed(2)}</span>
+                        <p style="margin-top: 0.5rem; margin-bottom: 0;">Utilization: ${utilization.toFixed(2)}%</p>
+                        <div class="utilization-bar">
+                            <div class="utilization-bar-fill" style="width:${Math.min(100, utilization)}%; background-color:${utilizationColor};"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="delete-btn" onclick="deleteAccount(${getAccounts().findIndex(a => a.name === acc.name)})">X</button>
+                    </div>
+                `;
+                list.appendChild(listItem);
+            });
+        }
+        
+        function renderLoans() {
+            const loans = getLoans();
+            const list = document.getElementById('loansList');
+            list.innerHTML = '';
+            
+            loans.forEach((loan, index) => {
+                const remaining = loan.total - loan.paid;
+                const progress = (loan.paid / loan.total) * 100;
+                const progressClass = progress >= 100 ? 'complete' : '';
+                
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `
+                    <div>
+                        <strong>${loan.name}</strong><br>
+                        <p style="margin-top: 0.5rem; margin-bottom: 0;">Remaining: $${remaining.toFixed(2)} / Total: $${loan.total.toFixed(2)}</p>
+                        <div class="utilization-bar">
+                            <div class="utilization-bar-fill ${progressClass}" style="width: ${Math.min(100, progress)}%; background-color: #28a745;"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="delete-btn" onclick="deleteLoan(${index})">X</button>
+                    </div>
+                `;
+                list.appendChild(listItem);
+            });
+            updateSelects();
+        }
+
+        function setMainChecking(index) {
+            let accounts = getAccounts();
+            accounts.forEach(acc => acc.isMain = false);
+            accounts[index].isMain = true;
+            saveAccounts(accounts);
+        }
+
+        function addCheckingSavingsAccount() {
+            const type = document.getElementById('cs_accountType').value;
+            const name = document.getElementById('cs_accountName').value.trim();
+            const balance = parseFloat(document.getElementById('cs_accountBalance').value);
+
+            if (name === '' || isNaN(balance)) {
                 return;
             }
 
-            const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+            let accounts = getAccounts();
+            const isMainChecking = accounts.filter(a => a.type === 'checking').length === 0 && type === 'checking';
+            
+            accounts.push({ type, name, balance, isMain: isMainChecking });
+            saveAccounts(accounts);
+
+            document.getElementById('cs_accountName').value = '';
+            document.getElementById('cs_accountBalance').value = '';
+        }
+        
+        function addCreditCardAccount() {
+            const name = document.getElementById('cc_accountName').value.trim();
+            const limit = parseFloat(document.getElementById('cc_creditLimit').value);
+            const balance = parseFloat(document.getElementById('cc_accountBalance').value) || 0;
+
+            if (name === '' || isNaN(limit)) {
+                return;
+            }
+
+            let accounts = getAccounts();
+            accounts.push({ type: 'credit', name, balance, limit, isMain: false });
+            saveAccounts(accounts);
+
+            document.getElementById('cc_accountName').value = '';
+            document.getElementById('cc_creditLimit').value = '';
+            document.getElementById('cc_accountBalance').value = '';
+        }
+        
+        function addLoan() {
+            const name = document.getElementById('loanName').value.trim();
+            const total = parseFloat(document.getElementById('loanTotalAmount').value);
+            const paid = parseFloat(document.getElementById('loanPaidAmount').value) || 0;
+            
+            if (name === '' || isNaN(total) || total <= 0) {
+                return;
+            }
+            
+            let loans = getLoans();
+            loans.push({ name, total, paid });
+            saveLoans(loans);
+            
+            document.getElementById('loanName').value = '';
+            document.getElementById('loanTotalAmount').value = '';
+            document.getElementById('loanPaidAmount').value = '';
+        }
+        
+        function payLoan() {
+            const loanIndex = document.getElementById('loanToPay').value;
+            const paymentSourceIndex = document.getElementById('paymentSource').value;
+            const paymentAmount = parseFloat(document.getElementById('loanPaymentAmount').value);
+
+            if (loanIndex === '' || paymentSourceIndex === '' || isNaN(paymentAmount) || paymentAmount <= 0) {
+                return;
+            }
+
+            let loans = getLoans();
+            let accounts = getAccounts();
+            let transactions = getTransactions();
+
+            const loan = loans[loanIndex];
+            const sourceAccount = accounts[paymentSourceIndex];
+
+            if (sourceAccount.balance < paymentAmount && sourceAccount.type !== 'credit') {
+                alert("Insufficient funds in your selected payment account.");
+                return;
+            }
+            
+            if (loan.paid + paymentAmount > loan.total) {
+                alert("Payment amount exceeds remaining loan balance.");
+                return;
+            }
+
+            sourceAccount.balance -= paymentAmount;
+            loan.paid += paymentAmount;
+
+            transactions.unshift({
+                accountId: parseInt(paymentSourceIndex),
+                amount: -paymentAmount,
+                description: `Payment to ${loan.name}`,
+                date: new Date().toISOString()
+            });
+
+            saveAccounts(accounts);
+            saveLoans(loans);
+            saveTransactions(transactions);
+
+            document.getElementById('loanPaymentAmount').value = '';
+        }
+
+        function deleteAccount(index) {
+            let accounts = getAccounts();
+            let transactions = getTransactions();
+            let accountTransactions = transactions.filter(tx => tx.accountId === index);
+            
+            if (accountTransactions.length > 0) {
+                if (!confirm(`This account has ${accountTransactions.length} transactions. Deleting it will also delete all of its transactions. Continue?`)) {
+                    return;
+                }
+                transactions = transactions.filter(tx => tx.accountId !== index);
+                
+                // Adjust transaction IDs for remaining accounts
+                transactions.forEach(tx => {
+                    if (tx.accountId > index) {
+                        tx.accountId--;
+                    }
+                });
+            }
+            
+            accounts.splice(index, 1);
+            saveTransactions(transactions);
+            saveAccounts(accounts);
+        }
+        
+        function deleteLoan(index) {
+            let loans = getLoans();
+            loans.splice(index, 1);
+            saveLoans(loans);
+        }
+        
+        function addCheckingTransaction(type) {
+            const accountIndex = document.getElementById('cs_transactionAccount').value;
+            let amount = parseFloat(document.getElementById('cs_transactionAmount').value);
+            const description = document.getElementById('cs_transactionDescription').value.trim();
+            
+            if (isNaN(amount) || amount <= 0 || description === '' || accountIndex === '') {
+                return;
+            }
+            
+            if (type === 'expense') {
+                amount = -amount;
+            }
+
+            let accounts = getAccounts();
+            let transactions = getTransactions();
+            const account = accounts[accountIndex];
+            
+            account.balance += amount;
+
             const newTransaction = {
+                accountId: parseInt(accountIndex),
                 amount: amount,
                 description: description,
                 date: new Date().toISOString()
             };
-            transactions.unshift(newTransaction); // Add to the beginning
-            localStorage.setItem('transactions', JSON.stringify(transactions));
-
-            // Update total cash
-            let currentCash = parseFloat(localStorage.getItem('totalCash')) || 0;
-            currentCash += amount;
-            localStorage.setItem('totalCash', currentCash);
-            document.getElementById('totalCash').value = currentCash.toFixed(2);
-            updateCashAvailable();
-
-            document.getElementById('transactionAmount').value = '';
-            document.getElementById('transactionDescription').value = '';
-            renderHistory();
+            transactions.unshift(newTransaction);
+            
+            saveAccounts(accounts);
+            saveTransactions(transactions);
+            
+            document.getElementById('cs_transactionAmount').value = '';
+            document.getElementById('cs_transactionDescription').value = '';
         }
+
+        function addCreditCardTransaction(type) {
+            const accounts = getAccounts();
+            const mainChecking = findMainCheckingAccount(accounts);
+            
+            if (type === 'pay' && !mainChecking) {
+                alert("Please set a Main Checking account first on the Checking & Savings page.");
+                return;
+            }
+            
+            const ccIndex = document.getElementById('cc_transactionAccount').value;
+            const amount = parseFloat(document.getElementById('cc_transactionAmount').value);
+            const description = document.getElementById('cc_transactionDescription').value.trim();
+
+            if (isNaN(amount) || amount <= 0 || description === '' || ccIndex === '') {
+                return;
+            }
+            
+            const creditCard = accounts[ccIndex];
+            let transactions = getTransactions();
+
+            if (type === 'charge') {
+                creditCard.balance += amount;
+                transactions.unshift({
+                    accountId: parseInt(ccIndex),
+                    amount: amount,
+                    description: `Charge: ${description}`,
+                    date: new Date().toISOString()
+                });
+            } else if (type === 'pay') {
+                if (mainChecking.balance < amount) {
+                    alert("Insufficient funds in your main checking account.");
+                    return;
+                }
+
+                let mainCheckingIndex = accounts.findIndex(acc => acc.isMain);
+                
+                mainChecking.balance -= amount;
+                creditCard.balance -= amount;
+
+                transactions.unshift({
+                    accountId: mainCheckingIndex,
+                    amount: -amount,
+                    description: `Payment to ${creditCard.name}`,
+                    date: new Date().toISOString()
+                });
+                
+                transactions.unshift({
+                    accountId: parseInt(ccIndex),
+                    amount: -amount,
+                    description: `Payment from ${mainChecking.name}`,
+                    date: new Date().toISOString()
+                });
+            }
+
+            saveAccounts(accounts);
+            saveTransactions(transactions);
+            
+            document.getElementById('cc_transactionAmount').value = '';
+            document.getElementById('cc_transactionDescription').value = '';
+        }
+        
+        function transferMoney() {
+            const accounts = getAccounts();
+            const fromIndex = document.getElementById('transferFromAccount').value;
+            const toIndex = document.getElementById('transferToAccount').value;
+            const amount = parseFloat(document.getElementById('transferAmount').value);
+
+            if (fromIndex === '' || toIndex === '' || isNaN(amount) || amount <= 0 || fromIndex === toIndex) {
+                alert("Please select valid accounts and a positive amount to transfer.");
+                return;
+            }
+
+            const fromAccount = accounts[fromIndex];
+            const toAccount = accounts[toIndex];
+            
+            if (fromAccount.balance < amount) {
+                alert("Insufficient funds in the source account.");
+                return;
+            }
+            
+            fromAccount.balance -= amount;
+            toAccount.balance += amount;
+
+            let transactions = getTransactions();
+            transactions.unshift({
+                accountId: parseInt(fromIndex),
+                amount: -amount,
+                description: `Transfer to ${toAccount.name}`,
+                date: new Date().toISOString()
+            });
+
+            transactions.unshift({
+                accountId: parseInt(toIndex),
+                amount: amount,
+                description: `Transfer from ${fromAccount.name}`,
+                date: new Date().toISOString()
+            });
+
+            saveAccounts(accounts);
+            saveTransactions(transactions);
+
+            document.getElementById('transferAmount').value = '';
+        }
+
 
         function renderHistory() {
             const list = document.getElementById('historyList');
             list.innerHTML = '';
-            const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+            const transactions = getTransactions();
+            const accounts = getAccounts();
 
             transactions.forEach((tx, index) => {
                 const listItem = document.createElement('li');
+                const account = accounts[tx.accountId] || {name: 'Deleted Account'};
                 const amountClass = tx.amount < 0 ? 'expense' : 'income';
                 const formattedAmount = `$${Math.abs(tx.amount).toFixed(2)}`;
                 const formattedDate = new Date(tx.date).toLocaleDateString('en-US', {
@@ -394,7 +1161,7 @@
                 listItem.innerHTML = `
                     <div class="history-item">
                         <span>${tx.description}</span>
-                        <span class="history-date">${formattedDate}</span>
+                        <span class="history-date">${formattedDate} on ${account.name}</span>
                     </div>
                     <span class="${amountClass}">${tx.amount < 0 ? '-' : '+'}${formattedAmount}</span>
                     <button class="delete-btn" onclick="deleteTransaction(${index})">X</button>
@@ -402,129 +1169,20 @@
                 list.appendChild(listItem);
             });
         }
-
+        
         function deleteTransaction(index) {
-            let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+            let transactions = getTransactions();
+            const tx = transactions[index];
+            let accounts = getAccounts();
             
-            // Revert cash change
-            let currentCash = parseFloat(localStorage.getItem('totalCash')) || 0;
-            currentCash -= transactions[index].amount;
-            localStorage.setItem('totalCash', currentCash);
-            document.getElementById('totalCash').value = currentCash.toFixed(2);
-            updateCashAvailable();
+            const account = accounts[tx.accountId];
+            if (account) {
+                account.balance -= tx.amount;
+            }
 
             transactions.splice(index, 1);
-            localStorage.setItem('transactions', JSON.stringify(transactions));
-            renderHistory();
-        }
-
-        function addBudget() {
-            const category = document.getElementById('budgetItem').value.trim();
-            const limit = parseFloat(document.getElementById('budgetLimit').value);
-            if (category === '' || isNaN(limit)) {
-                alert("Please enter a valid category and limit.");
-                return;
-            }
-
-            const budgets = JSON.parse(localStorage.getItem('budgets')) || [];
-            const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
-            
-            const newBudget = { category, limit, spent: 0 };
-            budgets.push(newBudget);
-            localStorage.setItem('budgets', JSON.stringify(budgets));
-            
-            document.getElementById('budgetItem').value = '';
-            document.getElementById('budgetLimit').value = '';
-            renderBudgets();
-        }
-        
-        function renderBudgets() {
-            const list = document.getElementById('budgetList');
-            list.innerHTML = '';
-            const budgets = JSON.parse(localStorage.getItem('budgets')) || [];
-            const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
-            
-            budgets.forEach((budget, index) => {
-                let spent = 0;
-                transactions.forEach(tx => {
-                    if (tx.description.toLowerCase().includes(budget.category.toLowerCase())) {
-                        spent += (tx.amount < 0) ? Math.abs(tx.amount) : 0;
-                    }
-                });
-
-                const progress = (spent / budget.limit) * 100;
-                const progressClass = progress > 100 ? 'over' : '';
-                
-                const listItem = document.createElement('li');
-                listItem.innerHTML = `
-                    <div>
-                        <strong>${budget.category}</strong>: $${spent.toFixed(2)} / $${budget.limit.toFixed(2)}
-                    </div>
-                    <div class="budget-progress">
-                        <div class="budget-bar ${progressClass}" style="width: ${Math.min(100, progress)}%;"></div>
-                    </div>
-                    <button class="delete-btn" onclick="deleteBudget(${index})">X</button>
-                `;
-                list.appendChild(listItem);
-            });
-        }
-
-        function deleteBudget(index) {
-            let budgets = JSON.parse(localStorage.getItem('budgets')) || [];
-            budgets.splice(index, 1);
-            localStorage.setItem('budgets', JSON.stringify(budgets));
-            renderBudgets();
-        }
-
-        function addGoal() {
-            const goal = document.getElementById('goalItem').value.trim();
-            const target = parseFloat(document.getElementById('goalTarget').value);
-            const saved = parseFloat(document.getElementById('goalSaved').value);
-
-            if (goal === '' || isNaN(target) || isNaN(saved)) {
-                alert("Please enter valid goal details.");
-                return;
-            }
-
-            const goals = JSON.parse(localStorage.getItem('goals')) || [];
-            const newGoal = { goal, target, saved };
-            goals.push(newGoal);
-            localStorage.setItem('goals', JSON.stringify(goals));
-
-            document.getElementById('goalItem').value = '';
-            document.getElementById('goalTarget').value = '';
-            document.getElementById('goalSaved').value = '';
-            renderGoals();
-        }
-
-        function renderGoals() {
-            const list = document.getElementById('goalsList');
-            list.innerHTML = '';
-            const goals = JSON.parse(localStorage.getItem('goals')) || [];
-
-            goals.forEach((goal, index) => {
-                const progress = (goal.saved / goal.target) * 100;
-                const progressClass = progress >= 100 ? 'complete' : '';
-                
-                const listItem = document.createElement('li');
-                listItem.innerHTML = `
-                    <div>
-                        <strong>${goal.goal}</strong>: $${goal.saved.toFixed(2)} / $${goal.target.toFixed(2)}
-                    </div>
-                    <div class="goal-progress">
-                        <div class="goal-bar ${progressClass}" style="width: ${Math.min(100, progress)}%;"></div>
-                    </div>
-                    <button class="delete-btn" onclick="deleteGoal(${index})">X</button>
-                `;
-                list.appendChild(listItem);
-            });
-        }
-        
-        function deleteGoal(index) {
-            let goals = JSON.parse(localStorage.getItem('goals')) || [];
-            goals.splice(index, 1);
-            localStorage.setItem('goals', JSON.stringify(goals));
-            renderGoals();
+            saveTransactions(transactions);
+            saveAccounts(accounts);
         }
 
         function clearAllData() {
@@ -533,7 +1191,67 @@
                 window.location.reload();
             }
         }
-    </script>
 
+        function drawCashFlowChart() {
+            const canvas = document.getElementById('cashFlowChart');
+            if (!canvas.getContext) return;
+            const ctx = canvas.getContext('2d');
+            const transactions = getTransactions();
+            const accounts = getAccounts();
+            
+            const initialCash = accounts
+                .reduce((sum, acc) => sum + (acc.type === 'credit' ? -acc.balance : acc.balance), 0);
+            
+            const width = canvas.width;
+            const height = canvas.height;
+            ctx.clearRect(0, 0, width, height);
+
+            const dataPoints = [initialCash];
+            let currentCash = initialCash;
+            const sortedTransactions = [...transactions].sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            sortedTransactions.forEach(tx => {
+                currentCash += tx.amount;
+                dataPoints.push(currentCash);
+            });
+            
+            if (dataPoints.length === 1) dataPoints.push(dataPoints[0]);
+
+            const minVal = Math.min(...dataPoints);
+            const maxVal = Math.max(...dataPoints);
+            const range = maxVal - minVal;
+
+            ctx.beginPath();
+            ctx.strokeStyle = '#007bff';
+            ctx.lineWidth = 2;
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+
+            const yScaler = height / (range === 0 ? 1 : range);
+            const xInterval = width / (dataPoints.length - 1);
+            const yOffset = minVal;
+
+            ctx.moveTo(0, height - (dataPoints[0] - yOffset) * yScaler);
+
+            for (let i = 1; i < dataPoints.length; i++) {
+                const x = i * xInterval;
+                const y = height - (dataPoints[i] - yOffset) * yScaler;
+                ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.strokeStyle = '#ccc';
+            ctx.lineWidth = 1;
+            const zeroY = height - (0 - yOffset) * yScaler;
+            ctx.moveTo(0, zeroY);
+            ctx.lineTo(width, zeroY);
+            ctx.stroke();
+
+            ctx.fillStyle = '#555';
+            ctx.font = '10px Arial';
+            ctx.fillText('$0', 5, zeroY - 5);
+        }
+    </script>
 </body>
 </html>
