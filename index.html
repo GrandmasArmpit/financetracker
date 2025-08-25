@@ -1406,7 +1406,7 @@
             });
         });
 
-        // Delete Logic
+        // Delete Logic - Now also handles balance reversal
         document.addEventListener('click', (e) => {
             if (e.target.classList.contains('delete-button')) {
                 const idToDelete = e.target.dataset.id;
@@ -1448,6 +1448,16 @@
                     if (category === 'cash') {
                         const index = financialData.cashTransactions.findIndex(tx => tx.id === idToDelete);
                         if (index > -1) {
+                            const transaction = financialData.cashTransactions[index];
+                            const account = financialData.bankAccounts.find(acc => acc.id === transaction.account_id);
+                            if (account) {
+                                // Reverse the transaction's effect
+                                if (transaction.type === 'income') {
+                                    account.balance -= transaction.amount;
+                                } else if (transaction.type === 'expense') {
+                                    account.balance += transaction.amount;
+                                }
+                            }
                             financialData.cashTransactions.splice(index, 1);
                             friendlyMessage = 'Cash Transaction deleted successfully.';
                             wasDeleted = true;
@@ -1455,6 +1465,20 @@
                     } else if (category === 'credit') {
                         const index = financialData.creditTransactions.findIndex(tx => tx.id === idToDelete);
                         if (index > -1) {
+                            const transaction = financialData.creditTransactions[index];
+                            const card = financialData.creditCards.find(c => c.id === transaction.card_id);
+                            if (card) {
+                                // Reverse the transaction's effect
+                                if (transaction.type === 'charge') {
+                                    card.balance -= transaction.amount;
+                                } else if (transaction.type === 'pay') {
+                                    card.balance += transaction.amount;
+                                    const mainCheckingAccount = financialData.bankAccounts.find(acc => acc.id === financialData.mainCheckingAccountId);
+                                    if (mainCheckingAccount) {
+                                        mainCheckingAccount.balance += transaction.amount;
+                                    }
+                                }
+                            }
                             financialData.creditTransactions.splice(index, 1);
                             friendlyMessage = 'Credit Card Transaction deleted successfully.';
                             wasDeleted = true;
@@ -1462,6 +1486,21 @@
                     } else if (category === 'loan') {
                         const index = financialData.loanPayments.findIndex(tx => tx.id === idToDelete);
                         if (index > -1) {
+                            const transaction = financialData.loanPayments[index];
+                            const loan = financialData.loans.find(l => l.id === transaction.loan_id) || financialData.otherDebts.find(od => od.id === transaction.loan_id);
+                            if (loan) {
+                                loan.current_amount += transaction.payment_amount;
+                            }
+                            const paymentSource = transaction.payment_method_type === 'Checking' ? 
+                                financialData.bankAccounts.find(acc => acc.id === transaction.payment_method_id) :
+                                financialData.creditCards.find(c => c.id === transaction.payment_method_id);
+                            if (paymentSource) {
+                                if (transaction.payment_method_type === 'Checking') {
+                                    paymentSource.balance += transaction.payment_amount;
+                                } else if (transaction.payment_method_type === 'CreditCard') {
+                                    paymentSource.balance -= transaction.payment_amount;
+                                }
+                            }
                             financialData.loanPayments.splice(index, 1);
                             friendlyMessage = 'Loan Payment deleted successfully.';
                             wasDeleted = true;
@@ -1469,6 +1508,11 @@
                     } else if (category === 'transfer') {
                         const index = financialData.transfers.findIndex(tx => tx.id === idToDelete);
                         if (index > -1) {
+                            const transaction = financialData.transfers[index];
+                            const fromAccount = financialData.bankAccounts.find(acc => acc.id === transaction.from_account_id);
+                            const toAccount = financialData.bankAccounts.find(acc => acc.id === transaction.to_account_id);
+                            if (fromAccount) { fromAccount.balance += transaction.amount; }
+                            if (toAccount) { toAccount.balance -= transaction.amount; }
                             financialData.transfers.splice(index, 1);
                             friendlyMessage = 'Transfer deleted successfully.';
                             wasDeleted = true;
@@ -1504,7 +1548,7 @@
                 refreshUI();
                 e.target.reset();
             } else {
-                showMessage("Please enter valid account name, type, and balance.");
+                showMessage("Please enter valid account name and a number for the balance.");
             }
         });
 
@@ -1531,7 +1575,7 @@
                 refreshUI();
                 e.target.reset();
             } else {
-                showMessage("Please enter valid card name, limit, and balance.");
+                showMessage("Please enter valid card name and numbers for the limit and balance.");
             }
         });
 
@@ -1564,7 +1608,7 @@
                 refreshUI();
                 e.target.reset();
             } else {
-                showMessage("Please enter valid debt name and amount.");
+                showMessage("Please enter valid debt name and a positive amount.");
             }
         });
 
